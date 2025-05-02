@@ -1,15 +1,41 @@
-import NavBar from "./layouts/navBar"
-import Register from "./components/register"
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import Register from './components/Register';
+import Dashboard from './pages/Dashboard'; 
+import AfficherPrestataire from './pages/AfficherPrestataire'; 
+import Layout from './components/Layout';  // Ajoutez le Layout ici
 
 function App() {
-
   return (
-    <>
-    <NavBar/>
-    <Register/>
-     <div></div>
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Page sans layout */}
+        <Route path="/register" element={<Register />} />
+
+        {/* Pages avec layout */}
+
+        
+        <Route
+          path="/AfficherPrestataire"
+          element={
+            <Layout>
+              <AfficherPrestataire />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
