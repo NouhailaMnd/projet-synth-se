@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -46,4 +47,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+
+    public function prestataire()
+    {
+        return $this->hasOne(Prestataire::class);
+    }
+
+    public function cEntreprise()
+    {
+        return $this->hasOne(CEntreprise::class);
+    }
+
+
+
 }
+
