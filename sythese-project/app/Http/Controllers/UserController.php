@@ -46,5 +46,18 @@ class UserController extends Controller
 
         return response()->json($user, 200);
     }
+    // Méthode pour supprimer un utilisateur
+public function destroy($id)
+{
+    // Trouver l'utilisateur à supprimer
+    $user = User::findOrFail($id);
+
+    // Supprimer l'utilisateur
+    $user->delete();
+
+    // Retourner une réponse JSON pour confirmer la suppression
+    return response()->json(['message' => 'Utilisateur supprimé avec succès.'], 200);
+}
+
 }
 

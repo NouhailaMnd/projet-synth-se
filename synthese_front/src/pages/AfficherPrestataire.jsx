@@ -36,7 +36,13 @@ const AfficherPrestataires = () => {
   };
 
   const handleAddPrestataire = () => {
-    axios.post('/api/prestataires', newPrestataire)
+    // Ajouter le rôle "prestataire" par défaut
+    const prestataireAvecRole = {
+      ...newPrestataire,
+      role: 'prestataire', // Ajout du rôle ici
+    };
+
+    axios.post('/api/prestataires', prestataireAvecRole)
       .then(() => {
         fetchData();
         setIsAdding(false);
@@ -197,14 +203,15 @@ const AfficherPrestataires = () => {
         </table>
       </div>
 
-      {/* Modal de confirmation de suppression */}
+      {/* Modal de suppression */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-            <h3 className="text-lg font-semibold text-gray-900">Êtes-vous sûr de vouloir supprimer ce prestataire ?</h3>
-            <div className="mt-4 flex justify-center space-x-4">
-              <button onClick={handleDeletePrestataire} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Oui, supprimer</button>
-              <button onClick={() => setIsDeleteModalOpen(false)} className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Annuler</button>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl shadow">
+            <h3 className="text-lg font-semibold mb-4 text-blue-900">Confirmer la suppression</h3>
+            <p>Êtes-vous sûr de vouloir supprimer ce prestataire ?</p>
+            <div className="mt-4 space-x-2">
+              <button onClick={handleDeletePrestataire} className="bg-red-600 text-white px-3 py-1 text-xs rounded hover:bg-red-700">Supprimer</button>
+              <button onClick={() => setIsDeleteModalOpen(false)} className="bg-gray-600 text-white px-3 py-1 text-xs rounded hover:bg-gray-700">Annuler</button>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Prestation;
@@ -18,7 +19,8 @@ class PrestataireController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        // Validation des données envoyées par la requête
+        $validatedData = $request->validate([
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string',
             'telephone' => 'required|string',
@@ -28,35 +30,41 @@ class PrestataireController extends Controller
             'pays' => 'nullable|string',
             'ville' => 'nullable|string',
             'quartier' => 'nullable|string',
-            'code_postal' => 'nullable|string'
+            'code_postal' => 'nullable|string',
         ]);
 
+        // Création de l'utilisateur avec les données validées
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+            'role' => 'prestataire', // Définir le rôle
         ]);
 
+        // Création du prestataire associé à l'utilisateur
         $prestataire = Prestataire::create([
             'user_id' => $user->id,
-            'telephone' => $request->telephone,
-            'prestation_id' => $request->prestation_id,
-            'genre' => $request->genre,
-            'pays' => $request->pays,
-            'ville' => $request->ville,
-            'quartier' => $request->quartier,
-            'code_postal' => $request->code_postal,
+            'telephone' => $validatedData['telephone'],
+            'prestation_id' => $validatedData['prestation_id'],
+            'genre' => $validatedData['genre'],
+            'pays' => $validatedData['pays'],
+            'ville' => $validatedData['ville'],
+            'quartier' => $validatedData['quartier'],
+            'code_postal' => $validatedData['code_postal'],
         ]);
 
+        // Retourner la réponse avec les informations du prestataire créé
         return response()->json($prestataire, 201);
     }
 
     public function update(Request $request, $id)
     {
+        // Trouver le prestataire existant par son ID
         $prestataire = Prestataire::findOrFail($id);
         $user = $prestataire->user;
 
-        $request->validate([
+        // Validation des données envoyées par la requête pour la mise à jour
+        $validatedData = $request->validate([
             'telephone' => 'required|string',
             'genre' => 'nullable|string',
             'prestation_id' => 'required|exists:prestations,id',
@@ -66,24 +74,26 @@ class PrestataireController extends Controller
             'code_postal' => 'nullable|string',
         ]);
 
+        // Mise à jour des informations de l'utilisateur
         $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
         ]);
 
-        $prestataire->update($request->only([
-            'telephone', 'prestation_id', 'genre', 'pays', 'ville', 'quartier', 'code_postal',
-        ]));
+        // Mise à jour des informations du prestataire
+        $prestataire->update($validatedData);
 
+        // Retourner la réponse avec les informations du prestataire mis à jour
         return response()->json($prestataire->load('user'));
     }
 
     public function destroy($id)
     {
+        // Trouver et supprimer le prestataire
         $prestataire = Prestataire::findOrFail($id);
         $prestataire->delete();
 
+        // Retourner une réponse confirmant la suppression
         return response()->json(['message' => 'Prestataire supprimé avec succès']);
     }
 }
-

@@ -23,7 +23,7 @@ const links = [
       <path d="M16 7h3v4h-3zm-7 8h11M9 11h4M9 7h4M6 18.5a2.5 2.5 0 11-5 0V7h5.025M6 18.5V3h17v15.5a2.5 2.5 0 01-2.5 2.5h-17" />
     </svg>
   )},
-  { to: '/users', label: 'Utilisateurs', icon: (
+  { to: '/UserTable', label: 'Utilisateurs', icon: (
     <svg className="w-6 h-6" viewBox="0 0 32 32" fill="currentColor">
       <path d="M16 14a6 6 0 100-12 6 6 0 000 12zm0 2c-4 0-12 2-12 6v4h24v-4c0-4-8-6-12-6z" />
     </svg>

@@ -5,18 +5,21 @@ use Illuminate\Support\Facades\Route;
 use App\http\Controllers\AuthController;
 use App\Http\Controllers\PrestataireController;
 use App\Http\Controllers\UserController;
-
+use App\Models\User;
 use App\Http\Controllers\PrestationController;
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
 // routes/api.php
 
-
+Route::get('/users', function () {
+    return User::all(); // renvoie tous les utilisateurs
+});
 
 Route::post('users', [UserController::class, 'store']);  // Créer un utilisateur
 

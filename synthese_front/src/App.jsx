@@ -6,6 +6,9 @@ import Dashboard from './pages/Dashboard';
 import AfficherPrestataire from './pages/AfficherPrestataire'; 
 import Layout from './components/Layout';  // Ajoutez le Layout ici
 import AfficherPrestations from './pages/AfficherPrestations';
+import UserTable from './pages/UserTable';
+
+
 
 function App() {
   return (
@@ -18,6 +21,14 @@ function App() {
 
         
         <Route
+          path="/UserTable"
+          element={
+            <Layout>
+              <UserTable />
+            </Layout>
+          }
+        />
+           <Route
           path="/AfficherPrestataire"
           element={
             <Layout>
