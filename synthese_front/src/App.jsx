@@ -5,6 +5,7 @@ import Register from './components/Register';
 import Dashboard from './pages/Dashboard'; 
 import AfficherPrestataire from './pages/AfficherPrestataire'; 
 import Layout from './components/Layout';  // Ajoutez le Layout ici
+import AfficherPrestations from './pages/AfficherPrestations';
 
 function App() {
   return (
@@ -24,7 +25,14 @@ function App() {
             </Layout>
           }
         />
-
+  <Route
+          path="/AfficherPrestations"
+          element={
+            <Layout>
+              <AfficherPrestations />
+            </Layout>
+          }
+        />
         <Route
           path="/"
           element={
