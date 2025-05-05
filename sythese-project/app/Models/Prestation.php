@@ -6,22 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Prestation extends Model
 {
-    // Déclaration des attributs qui peuvent être remplis en masse
-    protected $fillable = ['nom', 'description', 'disponible'];
+    protected $fillable = [
+        'nom',
+        'description',
+        'disponible',
+    ];
 
-    // Mutator pour enregistrer les valeurs '0' ou '1' en base de données
-    public function setDisponibleAttribute($value)
+    public function services()
     {
-        $this->attributes['disponible'] = $value ? 1 : 0;
+        return $this->hasMany(Service::class);
     }
 
-    // Accessor pour récupérer la valeur de 'disponible' sous forme booléenne
-    public function getDisponibleAttribute($value)
+    public function prestationPrestataires()
     {
-        return $value == 1;
-    }
-    public function prestataires()
-    {
-        return $this->hasMany(Prestataire::class);
+        return $this->hasMany(PrestationPrestataire::class);
     }
 }

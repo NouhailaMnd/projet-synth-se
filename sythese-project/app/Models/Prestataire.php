@@ -7,17 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 class Prestataire extends Model
 {
     protected $fillable = [
-        'user_id', 'genre', 'telephone', 'prestation_id',
-        'pays', 'ville', 'quartier', 'code_postal'
+        'user_id',
+        'telephone',
+        'genre',
+        'pays',
+        'ville',
+        'quartier',
+        'code_postal',
+        
     ];
 
+    // Relation avec la prestation
+    
+
+    // Relation avec l'utilisateur
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function prestation()
+
+    public function abonnements()
     {
-        return $this->belongsTo(Prestation::class);
+        return $this->hasMany(Abonnement::class);
+    }
+
+    public function prestationPrestataires()
+    {
+        return $this->hasMany(PrestationPrestataire::class);
+    }
+
+    public function serviceReservations()
+    {
+        return $this->hasMany(ServiceReservation::class);
     }
 }
