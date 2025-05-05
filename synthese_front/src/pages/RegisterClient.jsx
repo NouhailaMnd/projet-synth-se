@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function RegisterClient() {
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -47,6 +50,7 @@ export default function RegisterClient() {
         const data = await response.json();
         console.log("Inscription réussie :", data);
         // Optionnel : vider le formulaire ou rediriger
+        navigate('/login')
       }
     } catch (error) {
       console.error("Erreur réseau :", error);
@@ -55,13 +59,12 @@ export default function RegisterClient() {
   }
 
   return (
-    <div>
-      <div className="w-[100%] h-[100%] bg-white shadow-lg rounded-xl flex overflow-hidden">
-        {/* Formulaire */}
-        <div className=" flex items-center justify-center">
-          <div className="flex items-center justify-center p-12">
-            <div className="mx-auto w-full max-w-[550px] bg-white">
-              <form onSubmit={handleRegister}>
+    <div className="w-full h-full bg-white  rounded-xl flex overflow-hidden">
+            {/* Formulaire */}
+            <div className="flex items-center justify-center w-full">
+                <div className="flex items-center justify-center p-6 sm:p-12">
+                    <div className="mx-auto w-full max-w-md bg-white">
+                        <form onSubmit={handleRegister}>
                 <div className="mb-5">
                   <label htmlFor="name" className="mb-3 block text-base font-medium text-[#07074D]">
                     Nom complet
@@ -183,11 +186,10 @@ export default function RegisterClient() {
                     Enregistrer
                   </button>
                 </div>
-              </form>
+                </form>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
   );
 }
