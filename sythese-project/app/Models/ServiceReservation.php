@@ -11,6 +11,7 @@ class ServiceReservation extends Model
         'service_id',
         'reservation_id',
         'prestataire_id',
+        'duree',
     ];
     public function reservation()
     {

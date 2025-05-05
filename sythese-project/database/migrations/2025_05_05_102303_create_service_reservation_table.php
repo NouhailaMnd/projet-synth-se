@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
             $table->foreignId('reservation_id')->constrained('reservations')->onDelete('cascade');
             $table->foreignId('prestataire_id')->constrained('prestataires')->onDelete('cascade');
+            $table->time('duree')->nullable();
             $table->timestamps();
         });
     }
