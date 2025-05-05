@@ -27,7 +27,7 @@ useEffect(() => {
         password: '',
         role: 'prestataire',
         telephone:'',
-        prestation_id:'',
+        
         genre:'',
         pays: '',
         ville: '',
@@ -148,26 +148,7 @@ useEffect(() => {
                 {errors.password && <p className="text-red-500 text-sm">{errors.password[0]}</p>}
               </div>
 
-              <div className="mb-5">
-                <label htmlFor="prestation" className="mb-3 block text-base font-medium text-[#07074D]">
-                  Type de prestation
-                </label>
-                <select
-                  name="prestation_id"
-                  value={formData.prestation_id} onChange={handleChange} 
-                  id="prestation"
-                  required
-                  className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                >
-                  <option value="">-- Sélectionner une prestation --</option>
-                  {prestations.map((prestation) => (
-                    <option key={prestation.id} value={prestation.id}>
-                      {prestation.nom}
-                    </option>
-                  ))}
-               </select>
-                
-              </div>
+              
 
               <div className="mb-5">
                 <label className="mb-3 block text-base font-medium text-[#07074D]">

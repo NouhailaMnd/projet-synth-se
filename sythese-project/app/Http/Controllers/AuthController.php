@@ -40,11 +40,11 @@ class AuthController extends Controller
             $user->prestataire()->create([
                 'telephone' => $request->telephone,
                 'genre' => $request->genre,
-                'prestation_id' => $request->prestation_id,
                 'pays' => $request->pays,
                 'ville' => $request->ville,
                 'quartier' => $request->quartier,
                 'code_postal' => $request->code_postal,
+                'photo'=>'null',
             ]);
         } elseif ($user->role === 'entreprise') {
             $user->cEntreprise()->create([

@@ -11,4 +11,14 @@ class Prestation extends Model
         'description',
         'disponible',
     ];
+
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    public function prestationPrestataires()
+    {
+        return $this->hasMany(PrestationPrestataire::class);
+    }
 }

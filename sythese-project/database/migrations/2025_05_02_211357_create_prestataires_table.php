@@ -12,12 +12,12 @@ class CreatePrestatairesTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('telephone');
-            $table->foreignId('prestation_id')->constrained('prestations')->onDelete('cascade');
             $table->enum('genre', ['homme', 'femme']);
             $table->string('pays');
             $table->string('ville');
             $table->string('quartier');
             $table->string('code_postal')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

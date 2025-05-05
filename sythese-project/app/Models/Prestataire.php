@@ -9,7 +9,6 @@ class Prestataire extends Model
     protected $fillable = [
         'user_id',
         'telephone',
-        'prestation_id',
         'genre',
         'pays',
         'ville',
@@ -19,14 +18,27 @@ class Prestataire extends Model
     ];
 
     // Relation avec la prestation
-    public function prestation()
-    {
-        return $this->belongsTo(Prestation::class);
-    }
+    
 
     // Relation avec l'utilisateur
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+
+    public function abonnements()
+    {
+        return $this->hasMany(Abonnement::class);
+    }
+
+    public function prestationPrestataires()
+    {
+        return $this->hasMany(PrestationPrestataire::class);
+    }
+
+    public function serviceReservations()
+    {
+        return $this->hasMany(ServiceReservation::class);
     }
 }
