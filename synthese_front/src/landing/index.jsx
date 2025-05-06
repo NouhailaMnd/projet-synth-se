@@ -1,41 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 export default function Index() {
-  const categories = [
-    { name: 'Ménage', color: 'bg-blue-100', icon: '🧹' },
-    { name: 'Jardinage', color: 'bg-green-100', icon: '🌱' },
-    { name: 'Bricolage', color: 'bg-orange-100', icon: '🔨' },
-    { name: "Garde d'enfants", color: 'bg-purple-100', icon: '👶' },
-    { name: 'Cours à domicile', color: 'bg-red-100', icon: '📚' },
-    { name: 'Aide aux personnes', color: 'bg-yellow-100', icon: '👋' },
-  ];
+  const [services, setServices] = useState([]);
+  const [categories, setCategories] = useState([]);
+  
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/services")
+      .then(response => {
+        const data = response.data;
+  
+        const categoryMap = {};
+  
+        data.forEach(service => {
+          const prestation = service.prestation;
+          const catId = prestation.id;
+  
+          const match = prestation.nom.match(/^([\p{Emoji_Presentation}\p{Emoji}\p{So}])\s*(.+)$/u);
+          const icon = match ? match[1] : "🔧";
+          const name = match ? match[2] : prestation.nom;
+  
+          if (!categoryMap[catId]) {
+            categoryMap[catId] = {
+              id: catId,
+              name: name,
+              icon: icon,
+              color: "bg-white", // optionnel : tu peux varier selon catId
+              services: [],
+            };
+          }
+  
+          categoryMap[catId].services.push(service);
+        });
+  
+        setServices(data);
+        setCategories(Object.values(categoryMap));
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des services :", error);
+      });
+  }, []);
+  const navigate = useNavigate();
 
-  const services = [
-    {
-      title: 'Ménage complet',
-      category: 'Ménage',
-      rating: 4.8,
-      price: 20,
-      description: 'Service de nettoyage complet pour votre domicile.',
-      image: 'https://via.placeholder.com/300x180?text=Menage',
-    },
-    {
-      title: 'Tonte de pelouse',
-      category: 'Jardinage',
-      rating: 4.7,
-      price: 25,
-      description: 'Entretien de votre jardin, tonte de pelouse et taille de haies.',
-      image: 'https://via.placeholder.com/300x180?text=Jardinage',
-    },
-    {
-      title: 'Montage de meubles',
-      category: 'Bricolage',
-      rating: 4.9,
-      price: 30,
-      description: 'Assemblage et montage de vos meubles en kit.',
-      image: 'https://via.placeholder.com/300x180?text=Bricolage',
-    },
-  ];
+  
+  
+
+  
   const steps = [
     {
       number: 1,
@@ -115,53 +126,60 @@ export default function Index() {
 
       {/* CATÉGORIES + SERVICES POPULAIRES */}
       <div className="bg-gray-50 py-10 px-6 md:px-16">
-        {/* Catégories */}
-        <h2 className="text-2xl font-bold text-center mb-6">Nos catégories de services</h2>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 justify-items-center mb-10">
-          {categories.map((cat, index) => (
-            <div
-              key={index}
-              className={`w-full md:w-auto ${cat.color} rounded-xl py-6 px-4 text-center hover:shadow-md transition`}
-            >
-              <div className="text-3xl mb-2">{cat.icon}</div>
-              <p className="font-medium text-sm">{cat.name}</p>
-            </div>
-          ))}
-        </div>
+  <h2 className="text-2xl font-bold text-center mb-6">Nos catégories de services</h2>
 
-        {/* Services populaires */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Services populaires</h2>
-          <a href="#" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
-            Voir tous les services <span>→</span>
-          </a>
-        </div>
+  <div className="grid grid-cols-2 md:grid-cols-6 gap-4 justify-items-center mb-10">
+    {categories.map((cat) => (
+      <div
+        key={cat.id}
+        className={`w-full md:w-auto ${cat.color} rounded-xl py-6 px-4 text-center hover:shadow-md transition`}
+      >
+        <div className="text-3xl mb-2">{cat.icon}</div>
+        <p className="font-medium text-sm">{cat.name}</p>
+      </div>
+    ))}
+  </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {services.map((service, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <img src={service.image} alt={service.title} className="w-full h-48 object-cover" />
-              <div className="p-4">
-                <p className="text-sm text-blue-600 mb-1">{service.category}</p>
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-semibold">{service.title}</h3>
-                  <span className="text-yellow-500 text-sm font-medium flex items-center gap-1">
-                    ⭐ {service.rating}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mb-4">{service.description}</p>
-                <div className="flex justify-between items-center">
-                  <span className="font-bold">{service.price} €/h</span>
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">
-                    Réserver
-                  </button>
-                </div>
+      {/* Services populaires */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Services populaires</h2>
+        <a href="#" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
+          Voir tous les services <span>→</span>
+        </a>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {services.map((service, index) => (
+          <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <img
+              src={`/images/${service.photo}`} // suppose que tes images sont dans /public/images
+              alt={service.nom}
+              className="w-full h-48 object-cover"
+            />
+            <div className="p-4">
+              <p className="text-sm text-blue-600 mb-1">{service.prestation.nom}</p>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold">{service.nom}</h3>
+                <span className="text-yellow-500 text-sm font-medium flex items-center gap-1">
+                  ⭐ 4.8
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">{service.description}</p>
+              <div className="flex justify-between items-center">
+                <span className="font-bold">{service.prix} €/h</span>
+                <button
+  onClick={() => navigate(`/ServiceDetail/${service.id}`)}
+  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm"
+>
+  Réserver
+</button>
+
               </div>
             </div>
-          ))}
-        </div>
-        
+          </div>
+        ))}
       </div>
+    </div>
       <section className="bg-white py-12 text-center">
         <h2 className="text-2xl font-bold mb-10">Comment ça marche ?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6 max-w-6xl mx-auto">
