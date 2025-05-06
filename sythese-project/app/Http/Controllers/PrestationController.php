@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Prestation;
 use App\Models\Prestataire;
+use App\Models\PrestationPrestataire;
 use Illuminate\Http\JsonResponse;
 
 class PrestationController extends Controller
@@ -27,7 +28,12 @@ class PrestationController extends Controller
 
     public function parPrestation($prestation_id): JsonResponse
     {
-        $prestataires = Prestataire::where('prestation_id', $prestation_id)->get();
-        return response()->json($prestataires);
+
+        // Récupérer la prestation spécifique
+            $prestation = Prestation::findOrFail($prestation_id);
+
+            // Récupérer tous les prestataires associés à cette prestation
+            $prestataires = $prestation->prestataires;
+            return response()->json($prestataires);
     }
 }

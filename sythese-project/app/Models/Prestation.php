@@ -21,8 +21,10 @@ class Prestation extends Model
     {
         return $this->hasMany(PrestationPrestataire::class);
     }
+
     public function prestataires()
-{
-    return $this->hasMany(Prestataire::class);
-}
+    {
+        return $this->belongsToMany(Prestataire::class, 'prestation_prestataire', 'prestation_id', 'prestataire_id');
+    }
+
 }
