@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const PrestationForm = ({ prestation, onSave }) => {
+const PrestationForm = ({ prestation, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     id: '',
     nom: '',
@@ -16,6 +16,13 @@ const PrestationForm = ({ prestation, onSave }) => {
         nom: prestation.nom,
         description: prestation.description,
         disponible: prestation.disponible,
+      });
+    } else {
+      setFormData({
+        id: '',
+        nom: '',
+        description: '',
+        disponible: true,
       });
     }
   }, [prestation]);
@@ -37,7 +44,7 @@ const PrestationForm = ({ prestation, onSave }) => {
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200 max-w-xl">
       <h3 className="text-lg font-semibold mb-4 text-blue-900">
-        Ajouter une Prestation
+        {prestation ? 'Modifier une Prestation' : 'Ajouter une Prestation'}
       </h3>
       <div className="space-y-3">
         <div>
@@ -71,9 +78,20 @@ const PrestationForm = ({ prestation, onSave }) => {
             className="accent-blue-900"
           />
         </div>
-        <button type="submit" className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800">
-          Ajouter
-        </button>
+        <div className="flex space-x-2">
+          <button type="submit" className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800">
+            {prestation ? 'Enregistrer' : 'Ajouter'}
+          </button>
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="bg-gray-500 text-white px-3 py-1 text-sm rounded hover:bg-gray-600"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
       </div>
     </form>
   );
@@ -82,7 +100,7 @@ const PrestationForm = ({ prestation, onSave }) => {
 const AfficherPrestations = () => {
   const [prestations, setPrestations] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [editingPrestation, setEditingPrestation] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [prestationToDelete, setPrestationToDelete] = useState(null);
 
@@ -106,18 +124,15 @@ const AfficherPrestations = () => {
       });
   };
 
-  const handleChange = (id, field, value) => {
-    setPrestations((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, [field]: field === 'disponible' ? !p.disponible : value } : p
-      )
-    );
-  };
-
-  const handleUpdate = (prestation) => {
+  const handleUpdatePrestation = (updated) => {
     axios
-      .put(`/api/prestations/${prestation.id}`, prestation)
-      .then(() => setEditingId(null))
+      .put(`/api/prestations/${updated.id}`, updated)
+      .then(() => {
+        setPrestations((prev) =>
+          prev.map((p) => (p.id === updated.id ? updated : p))
+        );
+        setEditingPrestation(null);
+      })
       .catch((err) => {
         console.error('Erreur mise à jour prestation:', err);
         alert('Erreur mise à jour');
@@ -145,13 +160,24 @@ const AfficherPrestations = () => {
       <h2 className="text-2xl font-bold text-blue-900 mb-6 border-b pb-2">Liste des Prestations</h2>
 
       <button
-        onClick={() => setIsAdding(!isAdding)}
+        onClick={() => {
+          setIsAdding(!isAdding);
+          setEditingPrestation(null);
+        }}
         className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4"
       >
         + Ajouter une prestation
       </button>
 
-      {isAdding && <PrestationForm onSave={handleAddPrestation} />}
+      {isAdding && <PrestationForm onSave={handleAddPrestation} onCancel={() => setIsAdding(false)} />}
+
+      {editingPrestation && (
+        <PrestationForm
+          prestation={editingPrestation}
+          onSave={handleUpdatePrestation}
+          onCancel={() => setEditingPrestation(null)}
+        />
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white border rounded-xl shadow text-sm">
@@ -166,72 +192,28 @@ const AfficherPrestations = () => {
           <tbody>
             {prestations.map((p) => (
               <tr key={p.id} className="border-t hover:bg-blue-50">
-                <td className="p-1 text-xs">
-                  {editingId === p.id ? (
-                    <input
-                      type="text"
-                      value={p.nom}
-                      onChange={(e) => handleChange(p.id, 'nom', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                    />
-                  ) : (
-                    p.nom
-                  )}
-                </td>
-                <td className="p-1 text-xs">
-                  {editingId === p.id ? (
-                    <input
-                      type="text"
-                      value={p.description}
-                      onChange={(e) => handleChange(p.id, 'description', e.target.value)}
-                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-                    />
-                  ) : (
-                    p.description
-                  )}
-                </td>
-                <td className="p-1 text-xs text-center">
-                  {editingId === p.id ? (
-                    <input
-                      type="checkbox"
-                      checked={p.disponible}
-                      onChange={() => handleChange(p.id, 'disponible')}
-                      className="accent-blue-900"
-                    />
-                  ) : p.disponible ? 'Oui' : 'Non'}
-                </td>
-                <td className="p-1 text-xs flex space-x-1">
-                  {editingId === p.id ? (
-                    <>
-                      <button
-                        onClick={() => handleUpdate(p)}
-                        className="bg-blue-900 text-white px-2 py-1 text-xs rounded hover:bg-blue-800"
-                      >
-                        💾
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="bg-gray-600 text-white px-2 py-1 text-xs rounded hover:bg-gray-700"
-                      >
-                        ❌
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => setEditingId(p.id)}
-                        className="bg-yellow-500 text-white px-2 py-1 text-xs rounded hover:bg-yellow-600"
-                      >
-                        ✏
-                      </button>
-                      <button
-                        onClick={() => { setIsDeleteModalOpen(true); setPrestationToDelete(p); }}
-                        className="bg-red-600 text-white px-2 py-1 text-xs rounded hover:bg-red-700"
-                      >
-                        🗑
-                      </button>
-                    </>
-                  )}
+                <td className="p-2 text-xs">{p.nom}</td>
+                <td className="p-2 text-xs">{p.description}</td>
+                <td className="p-2 text-xs text-center">{p.disponible ? 'Oui' : 'Non'}</td>
+                <td className="p-2 text-xs flex space-x-1">
+                  <button
+                    onClick={() => {
+                      setEditingPrestation(p);
+                      setIsAdding(false);
+                    }}
+                    className="bg-yellow-500 text-white px-2 py-1 text-xs rounded hover:bg-yellow-600"
+                  >
+                    ✏
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsDeleteModalOpen(true);
+                      setPrestationToDelete(p);
+                    }}
+                    className="bg-red-600 text-white px-2 py-1 text-xs rounded hover:bg-red-700"
+                  >
+                    🗑
+                  </button>
                 </td>
               </tr>
             ))}
@@ -245,8 +227,15 @@ const AfficherPrestations = () => {
           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
             <h3 className="text-lg font-semibold text-gray-900">Êtes-vous sûr de vouloir supprimer cette prestation ?</h3>
             <div className="mt-4 flex justify-center space-x-4">
-              <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Oui, supprimer</button>
-              <button onClick={() => setIsDeleteModalOpen(false)} className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Annuler</button>
+              <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                Oui, supprimer
+              </button>
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              >
+                Annuler
+              </button>
             </div>
           </div>
         </div>

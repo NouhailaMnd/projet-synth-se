@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import axios from "axios";
 
 const AfficherPrestataires = () => {
@@ -15,25 +15,28 @@ const AfficherPrestataires = () => {
     ville: '',
     quartier: '',
     code_postal: '',
-    prestations: [] // Prestations sélectionnées
+    prestations: []
   });
   const [prestations, setPrestations] = useState([]);
 
+  const fetchPrestataires = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/prestataires");
+      setPrestataires(response.data);
+    } catch (error) {
+      console.error("Erreur lors du chargement des prestataires :", error);
+    }
+  };
+
   useEffect(() => {
-    axios.get("http://localhost:8000/api/prestataires")
-      .then((response) => {
-        setPrestataires(response.data);
-      })
-      .catch((error) => {
-        console.error("Il y a une erreur lors du chargement des prestataires: ", error);
-      });
+    fetchPrestataires();
 
     axios.get("http://localhost:8000/api/prestations")
       .then((response) => {
         setPrestations(response.data);
       })
       .catch((error) => {
-        console.error("Il y a une erreur lors du chargement des prestations: ", error);
+        console.error("Erreur lors du chargement des prestations :", error);
       });
   }, []);
 
@@ -65,23 +68,16 @@ const AfficherPrestataires = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     try {
-      let response;
       if (formData.id) {
-        response = await axios.put(`http://localhost:8000/api/prestataires/${formData.id}`, formData);
-        setPrestataires((prev) =>
-          prev.map((prestataire) =>
-            prestataire.id === formData.id ? response.data : prestataire
-          )
-        );
+        await axios.put(`http://localhost:8000/api/prestataires/${formData.id}`, formData);
       } else {
-        response = await axios.post("http://localhost:8000/api/prestataires", formData);
-        setPrestataires((prev) => [...prev, response.data]);
+        await axios.post("http://localhost:8000/api/prestataires", formData);
       }
 
+      await fetchPrestataires(); // Rafraîchir les données avec relations complètes
       setShowForm(false);
       setFormData({
         id: null,
@@ -94,10 +90,10 @@ const AfficherPrestataires = () => {
         ville: '',
         quartier: '',
         code_postal: '',
-        prestations: [] // Réinitialiser les prestations
+        prestations: []
       });
     } catch (error) {
-      console.error("Erreur lors de l'enregistrement: ", error);
+      console.error("Erreur lors de l'enregistrement :", error);
     }
   };
 
@@ -106,22 +102,22 @@ const AfficherPrestataires = () => {
       await axios.delete(`http://localhost:8000/api/prestataires/${id}`);
       setPrestataires(prestataires.filter((prestataire) => prestataire.id !== id));
     } catch (error) {
-      console.error("Erreur lors de la suppression: ", error);
+      console.error("Erreur lors de la suppression :", error);
     }
   };
 
   const handleEdit = (prestataire) => {
     setFormData({
       id: prestataire.id,
-      name: prestataire.user.name,
-      email: prestataire.user.email,
+      name: prestataire.user?.name || '',
+      email: prestataire.user?.email || '',
       telephone: prestataire.telephone,
       genre: prestataire.genre,
       pays: prestataire.pays,
       ville: prestataire.ville,
       quartier: prestataire.quartier,
       code_postal: prestataire.code_postal,
-      prestations: prestataire.prestations ? prestataire.prestations.map((prestation) => prestation.id) : [] // Vérifier si prestations est défini
+      prestations: prestataire.prestations ? prestataire.prestations.map((p) => p.id) : []
     });
     setShowForm(true);
   };
@@ -134,7 +130,9 @@ const AfficherPrestataires = () => {
 
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow-lg mb-6 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-4 text-indigo-800">{formData.id ? "Modifier Prestataire" : "Nouveau Prestataire"}</h3>
+          <h3 className="text-lg font-semibold mb-4 text-indigo-800">
+            {formData.id ? "Modifier Prestataire" : "Nouveau Prestataire"}
+          </h3>
           <div className="grid grid-cols-2 gap-6">
             {['name', 'email', 'password', 'telephone', 'genre', 'pays', 'ville', 'quartier', 'code_postal'].map(field => (
               <input
@@ -146,7 +144,6 @@ const AfficherPrestataires = () => {
                 className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-sm"
               />
             ))}
-
             <select
               name="prestations"
               multiple
@@ -175,9 +172,9 @@ const AfficherPrestataires = () => {
         </div>
       )}
 
-      <div className="  overflow-x-auto">
-      <table className="w-full bg-white border rounded-xl shadow text-sm">
-      <thead className="bg-blue-900 text-white">
+      <div className="overflow-x-auto">
+        <table className="w-full bg-white border rounded-xl shadow text-sm">
+          <thead className="bg-blue-900 text-white">
             <tr>
               <th className="p-2 text-left text-xs">Nom</th>
               <th className="p-2 text-left text-xs">Email</th>
@@ -186,7 +183,7 @@ const AfficherPrestataires = () => {
               <th className="p-2 text-left text-xs">Prestation</th>
               <th className="p-2 text-left text-xs">Ville</th>
               <th className="p-2 text-left text-xs">Quartier</th>
-              <th className="p-2 text-left text-xs">Code_postal</th>
+              <th className="p-2 text-left text-xs">Code postal</th>
               <th className="p-2 text-left text-xs">Actions</th>
             </tr>
           </thead>
@@ -199,32 +196,32 @@ const AfficherPrestataires = () => {
                   <td className="py-4 px-6">{prestataire.telephone}</td>
                   <td className="py-4 px-6">{prestataire.genre}</td>
                   <td className="py-4 px-6">
-                    {prestataire.prestations && prestataire.prestations.length > 0
-                      ? prestataire.prestations.map((prestation) => prestation.nom).join(", ")
+                    {prestataire.prestations?.length
+                      ? prestataire.prestations.map((p) => p.nom).join(", ")
                       : "Aucune prestation"}
                   </td>
                   <td className="py-4 px-6">{prestataire.ville}</td>
                   <td className="py-4 px-6">{prestataire.quartier}</td>
-
                   <td className="py-4 px-6">{prestataire.code_postal}</td>
-
                   <td className="py-4 px-6 flex space-x-3">
-                    <button 
-                      onClick={() => handleEdit(prestataire)} 
-                      className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all">
+                    <button
+                      onClick={() => handleEdit(prestataire)}
+                      className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all"
+                    >
                       ✏
                     </button>
-                    <button 
-                      onClick={() => handleDelete(prestataire.id)} 
-                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all">
-                            🗑
+                    <button
+                      onClick={() => handleDelete(prestataire.id)}
+                      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all"
+                    >
+                      🗑
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
+                <td colSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
               </tr>
             )}
           </tbody>
