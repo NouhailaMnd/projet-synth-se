@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 export default function RegisterPrestataire() {
-
+  const navigate = useNavigate();
   const [prestations, setPrestations] = useState([]);
 
   useEffect(() => {
@@ -62,6 +62,7 @@ export default function RegisterPrestataire() {
       } else {
         const data = await response.json();
         console.log("Inscription réussie :", data);
+        navigate('/login')
       }
     } catch (error) {
       console.error("Erreur réseau :", error);

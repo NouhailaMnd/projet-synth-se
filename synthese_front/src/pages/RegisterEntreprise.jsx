@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 export default function RegisterEntreprise() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',  
         email: '',
@@ -45,6 +46,7 @@ export default function RegisterEntreprise() {
             } else {
                 const data = await response.json();
                 console.log("Inscription réussie :", data);
+                navigate('/login')
                 // Optionnel : vider le formulaire ou rediriger
             }
         } catch (error) {

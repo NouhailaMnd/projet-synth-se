@@ -41,7 +41,7 @@ export default function Login() {
             } else {
               const data = await response.json();
               console.log("connexion réussie :", data);
-              navigate('/dashboard');
+              navigate('/');
               // Optionnel : vider le formulaire ou rediriger
             }
           } catch (error) {

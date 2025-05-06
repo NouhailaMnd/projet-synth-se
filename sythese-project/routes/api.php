@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PrestationController;
 
+use App\Http\Controllers\AuthController;
+
+
 use App\Models\Prestation;
 
 

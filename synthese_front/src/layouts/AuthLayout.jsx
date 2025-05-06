@@ -22,17 +22,17 @@ export default function AuthLayout() {
 
         <ul className="space-y-4">
           <li>
-            <Link to="/" className={linkClass('/')}>
+            <Link to="/auth" className={linkClass('/')}>
               👤 <span>Prestataire</span>
             </Link>
           </li>
           <li>
-            <Link to="/Entreprise" className={linkClass('/Entreprise')}>
+            <Link to="/auth/Entreprise" className={linkClass('/Entreprise')}>
               🏢 <span>Entreprise</span>
             </Link>
           </li>
           <li>
-            <Link to="/Client" className={linkClass('/Client')}>
+            <Link to="/auth/Client" className={linkClass('/Client')}>
               🙋‍♀️ <span>Client</span>
             </Link>
           </li>

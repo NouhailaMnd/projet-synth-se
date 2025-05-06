@@ -1,4 +1,3 @@
-import Register from "./components/register"
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AuthLayout from './layouts/AuthLayout';
@@ -16,19 +15,17 @@ import Checkout from "./landing/Checkout";
 
 function App() {
   return (
-    <>
-
     <Router>
       <NavBar />
       <Routes>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<RegisterPrestataire />} />
-          <Route path="/Entreprise" element={<RegisterEntreprise />} />
-          <Route path="/Client" element={<RegisterClient />} />
+          <Route path="Entreprise" element={<RegisterEntreprise />} />
+          <Route path="Client" element={<RegisterClient />} />
         </Route>
+
+        <Route path="/login" element={<Login />} />
         
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/dashboard' />
         
         <Route path="/" element={<Index />} />
         <Route path="/Services" element={<ServiceList />} />
@@ -38,11 +35,8 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </Router>
-
-    
-     <div></div>
-    </>
-  )
+  );
 }
+
 
 export default App;
