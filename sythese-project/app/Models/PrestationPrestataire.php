@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Models\Prestation;
+use App\Models\Prestataire;
 
 use Illuminate\Database\Eloquent\Model;
 
