@@ -26,5 +26,4 @@ class Prestation extends Model
     {
         return $this->belongsToMany(Prestataire::class, 'prestation_prestataire', 'prestation_id', 'prestataire_id');
     }
-
 }

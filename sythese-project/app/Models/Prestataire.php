@@ -36,11 +36,14 @@ class Prestataire extends Model
     {
         return $this->hasMany(PrestationPrestataire::class);
     }
+
     
     public function prestations()
     {
         return $this->belongsToMany(Prestation::class, 'prestation_prestataire', 'prestataire_id', 'prestation_id');
     }
+
+
 
     public function serviceReservations()
     {

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PrestationController;
 
+use App\Models\Prestation;
+
+
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
@@ -18,4 +21,14 @@ Route::get('/services/{id}', [ServiceController::class, 'show']);
 Route::get('/prestataires/par-prestation/{id}', [PrestationController::class, 'parPrestation']);
 
 
+
+
+Route::post('/register',[AuthController::class,'register']);
+Route::post('/login',[AuthController::class,'login']);
+Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
+
+
+Route::get('/prestations', function () {
+    return response()->json(Prestation::all());
+});
 
