@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const AfficherPrestataires = () => {
@@ -30,7 +30,6 @@ const AfficherPrestataires = () => {
 
   useEffect(() => {
     fetchPrestataires();
-
     axios.get("http://localhost:8000/api/prestations")
       .then((response) => {
         setPrestations(response.data);
@@ -47,19 +46,18 @@ const AfficherPrestataires = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePrestationChange = (e) => {
-    const { options } = e.target;
-    const selectedPrestations = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectedPrestations.push(options[i].value);
-      }
-    }
-    setFormData((prev) => ({ ...prev, prestations: selectedPrestations }));
+  const handleCheckboxChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => {
+      const prestations = prev.prestations.includes(value)
+        ? prev.prestations.filter((id) => id !== value)
+        : [...prev.prestations, value];
+      return { ...prev, prestations };
+    });
   };
 
   const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.telephone || !formData.prestations.length) {
+    if (!formData.name || !formData.email || !formData.telephone || formData.prestations.length === 0) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return false;
     }
@@ -77,7 +75,7 @@ const AfficherPrestataires = () => {
         await axios.post("http://localhost:8000/api/prestataires", formData);
       }
 
-      await fetchPrestataires(); // Rafraîchir les données avec relations complètes
+      await fetchPrestataires();
       setShowForm(false);
       setFormData({
         id: null,
@@ -100,7 +98,7 @@ const AfficherPrestataires = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:8000/api/prestataires/${id}`);
-      setPrestataires(prestataires.filter((prestataire) => prestataire.id !== id));
+      setPrestataires(prestataires.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
     }
@@ -117,7 +115,7 @@ const AfficherPrestataires = () => {
       ville: prestataire.ville,
       quartier: prestataire.quartier,
       code_postal: prestataire.code_postal,
-      prestations: prestataire.prestations ? prestataire.prestations.map((p) => p.id) : []
+      prestations: prestataire.prestations?.map((p) => p.id.toString()) || []
     });
     setShowForm(true);
   };
@@ -144,23 +142,27 @@ const AfficherPrestataires = () => {
                 className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-sm"
               />
             ))}
-            <select
-              name="prestations"
-              multiple
-              value={formData.prestations}
-              onChange={handlePrestationChange}
-              className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-sm"
-            >
-              <option value="">Choisir les prestations</option>
-              {prestations.length > 0 ? (
-                prestations.map((prestation) => (
-                  <option key={prestation.id} value={prestation.id}>{prestation.nom}</option>
-                ))
-              ) : (
-                <option disabled>Aucune prestation disponible</option>
-              )}
-            </select>
+
+            {/* ✅ LISTE DE CHECKBOXES POUR PRESTATIONS */}
+            <div className="border rounded-lg p-3 col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Prestations :</label>
+              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                {prestations.map((prestation) => (
+                  <label key={prestation.id} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      value={prestation.id.toString()}
+                      checked={formData.prestations.includes(prestation.id.toString())}
+                      onChange={handleCheckboxChange}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-800">{prestation.nom}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
           </div>
+
           <div className="mt-6 flex space-x-3">
             <button onClick={handleSubmit} className="bg-indigo-900 text-white px-4 py-2 text-sm rounded-md hover:bg-indigo-800 transition-all">
               Sauvegarder
@@ -221,7 +223,7 @@ const AfficherPrestataires = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
+                <td coSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
               </tr>
             )}
           </tbody>
