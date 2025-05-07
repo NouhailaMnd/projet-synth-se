@@ -12,6 +12,8 @@ import Contact from './landing/Contact';
 import HowItWorks from './landing/HowItWorks';
 import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
+import Dashboard from './presatataire/pages/Dashboard';
+import PrestataireProfile from './presatataire/components/PrestataireProfile';
 
 function App() {
   return (
@@ -33,8 +35,14 @@ function App() {
         <Route path="/HowItWorks" element={<HowItWorks />} />
         <Route path="/ServiceDetail/:id" element={<ServiceDetail />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<PrestataireProfile />} />
+
+
       </Routes>
     </Router>
+
+    
   );
 }
 
