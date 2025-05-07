@@ -7,6 +7,8 @@ import AfficherPrestataire from './pages/AfficherPrestataire';
 import Layout from './components/Layout';  // Ajoutez le Layout ici
 import AfficherPrestations from './pages/AfficherPrestations';
 import UserTable from './pages/UserTable';
+import Gestionservices from './pages/Gestionservices';
+import UserStats from './pages/UserStats';
 
 
 
@@ -19,7 +21,15 @@ function App() {
 
         {/* Pages avec layout */}
 
-        
+        <Route
+          path="/UserStats"
+          element={
+            
+            <Layout >
+  <UserStats />           
+  </Layout>
+          }
+        />
         <Route
           path="/UserTable"
           element={
@@ -41,6 +51,14 @@ function App() {
           element={
             <Layout>
               <AfficherPrestations />
+            </Layout>
+          }
+        />
+          <Route
+          path="/Gestionservices"
+          element={
+            <Layout>
+              <Gestionservices />
             </Layout>
           }
         />

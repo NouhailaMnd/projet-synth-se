@@ -30,7 +30,9 @@ const AfficherPrestataires = () => {
 
   useEffect(() => {
     fetchPrestataires();
-    axios.get("http://localhost:8000/api/prestations")
+
+    // ✅ Charger uniquement les prestations disponibles
+    axios.get("http://localhost:8000/api/prestations-disponibles")
       .then((response) => {
         setPrestations(response.data);
       })
@@ -143,7 +145,7 @@ const AfficherPrestataires = () => {
               />
             ))}
 
-            {/* ✅ LISTE DE CHECKBOXES POUR PRESTATIONS */}
+            {/* ✅ LISTE DE CHECKBOXES POUR PRESTATIONS DISPONIBLES */}
             <div className="border rounded-lg p-3 col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Prestations :</label>
               <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
@@ -223,7 +225,7 @@ const AfficherPrestataires = () => {
               ))
             ) : (
               <tr>
-                <td coSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
+                <td colSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
               </tr>
             )}
           </tbody>

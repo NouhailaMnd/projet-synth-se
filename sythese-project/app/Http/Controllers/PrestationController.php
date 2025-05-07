@@ -13,7 +13,11 @@ class PrestationController extends Controller
     {
         return Prestation::all();
     }
-
+    public function disponibles()
+    {
+        $prestations = Prestation::where('disponible', 1)->get();
+        return response()->json($prestations);
+    }
     // Ajouter une nouvelle prestation
     public function store(Request $request)
     {

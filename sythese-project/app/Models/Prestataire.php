@@ -45,8 +45,10 @@ class Prestataire extends Model
     // app/Models/Prestataire.php
     public function prestations()
     {
-        return $this->belongsToMany(Prestation::class, 'prestation_prestataire', 'prestataire_id', 'prestation_id');
+        return $this->belongsToMany(Prestation::class, 'prestation_prestataire', 'prestataire_id', 'prestation_id')
+                    ->where('disponible', 1);
     }
+    
     
     
 
