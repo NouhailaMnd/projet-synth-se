@@ -26,7 +26,7 @@ const Gestionservices = () => {
         const fetchData = async () => {
             await fetchServices();
             try {
-                const prestationsResponse = await axios.get("http://localhost:8000/api/prestations-disponibles");
+                const prestationsResponse = await axios.get("http://localhost:8000/api/prestations");
                 setPrestations(prestationsResponse.data);
             } catch (error) {
                 console.error("Erreur lors du chargement des prestations :", error);

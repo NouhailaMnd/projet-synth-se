@@ -32,7 +32,7 @@ const AfficherPrestataires = () => {
     fetchPrestataires();
 
     // ✅ Charger uniquement les prestations disponibles
-    axios.get("http://localhost:8000/api/prestations-disponibles")
+    axios.get("http://localhost:8000/api/prestations")
       .then((response) => {
         setPrestations(response.data);
       })

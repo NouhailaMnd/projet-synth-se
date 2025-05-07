@@ -35,19 +35,19 @@ class PrestataireController extends Controller
             'code_postal' => 'required|string|max:10',
             'prestations' => 'required|array|min:1',
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
+    
         // Création de l'utilisateur
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'prestataire',  // Assignation du rôle "prestataire"
+            'role' => 'prestataire',
         ]);
-
+    
         // Création du prestataire
         $prestataire = Prestataire::create([
             'user_id' => $user->id,
@@ -58,15 +58,28 @@ class PrestataireController extends Controller
             'quartier' => $request->quartier,
             'code_postal' => $request->code_postal,
         ]);
-
-        // Ajout des prestations associées au prestataire
+    
+        // Vérifier et mettre à jour les prestations
+        foreach ($request->prestations as $prestationId) {
+            $prestation = Prestation::find($prestationId);
+            
+            // Si la prestation n'est pas disponible (disponible = 0), la rendre disponible
+            if ($prestation && $prestation->disponible == 0) {
+                $prestation->disponible = 1;
+                $prestation->save();
+            }
+        }
+    
+        // Attacher les prestations au prestataire
         $prestataire->prestations()->attach($request->prestations);
-
+    
         return response()->json([
             'message' => 'Prestataire ajouté avec succès.',
             'prestataire' => $prestataire
         ], 201);
     }
+    
+    
 
   // Exemple d'un contrôleur Laravel qui met à jour un prestataire avec des prestations
   public function update(Request $request, $id)
