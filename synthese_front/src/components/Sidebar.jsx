@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const links = [
-  { to: '/dashboard', label: 'Dashboard', icon: (
+  { to: '/', label: 'Dashboard', icon: (
     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
     </svg>
@@ -17,13 +17,12 @@ const links = [
       </svg>
     ),
     children: [
-      { to: '/acceuil/actualites', label: 'Actualités' },
       {
         to: '/acceuil/stats',
         label: 'Statistiques',
         children: [
           { to: '/UserStats', label: 'Utilisateur' },
-          { to: '/Reservation', label: 'Résérvation' },
+          { to: '/ReservationChart', label: 'Résérvation' },
         ],
       },
     ],
