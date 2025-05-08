@@ -4,11 +4,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PrestationController;
+use App\Http\Controllers\Prestataire\ProfileController;
+
 
 use App\Http\Controllers\AuthController;
 
 
 use App\Models\Prestation;
+
+
 
 
 //Route::get('/user', function (Request $request) {
@@ -35,3 +39,8 @@ Route::get('/prestations', function () {
     return response()->json(Prestation::all());
 });
 
+
+
+
+
+Route::middleware('auth:sanctum')->get('/prestataire/prestations', [\App\Http\Controllers\Prestataire\ProfileController::class, 'afficherPrestationsAvecAssociation']);

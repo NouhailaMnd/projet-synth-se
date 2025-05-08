@@ -1,6 +1,11 @@
 import React,{useState} from "react";
 import { useNavigate } from 'react-router-dom';
 export default function Login() {
+
+
+ 
+
+
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
            
@@ -35,14 +40,16 @@ export default function Login() {
                 setErrors(errorData.errors);
               } else {
                 console.error("Erreur serveur :", response.status);
-                console.log(formData);
                 alert("Une erreur est survenue. Veuillez réessayer plus tard.");
               }
             } else {
-              const data = await response.json();
+              const data = await response.json(); // <- ici tu récupères les données
               console.log("connexion réussie :", data);
-              navigate('/');
-              // Optionnel : vider le formulaire ou rediriger
+        
+              const token = data.token; // <- ici tu prends le token
+              localStorage.setItem('authToken', token); // <- ici tu l'enregistres
+        
+              navigate('/'); // <- redirection après connexion
             }
           } catch (error) {
             console.error("Erreur réseau :", error);

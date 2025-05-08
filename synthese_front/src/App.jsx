@@ -14,6 +14,8 @@ import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
 import Dashboard from './presatataire/pages/Dashboard';
 import PrestataireProfile from './presatataire/components/PrestataireProfile';
+import PrestationsList from './presatataire/components/PrestationsList';
+
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<PrestataireProfile />} />
+        <Route path="/PrestationsList" element={<PrestationsList />} />
 
 
       </Routes>
