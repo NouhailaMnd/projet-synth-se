@@ -12,7 +12,7 @@ class Prestation extends Model
     protected $fillable = [
         'nom',          // Nom de la prestation
         'description',  // Description de la prestation
-        'disponible',   // Statut de disponibilité de la prestation
+        'disponible', 
     ];
 
     // Relation avec les services (une prestation peut avoir plusieurs services)

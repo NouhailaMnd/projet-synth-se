@@ -15,9 +15,17 @@ const AfficherPrestataires = () => {
     ville: '',
     quartier: '',
     code_postal: '',
-    prestations: []
+    prestations: [],
+    photo: null,
   });
   const [prestations, setPrestations] = useState([]);
+
+  useEffect(() => {
+    fetchPrestataires();
+    axios.get("http://localhost:8000/api/prestations")
+      .then((response) => setPrestations(response.data))
+      .catch((error) => console.error("Erreur lors du chargement des prestations :", error));
+  }, []);
 
   const fetchPrestataires = async () => {
     try {
@@ -28,24 +36,31 @@ const AfficherPrestataires = () => {
     }
   };
 
-  useEffect(() => {
-    fetchPrestataires();
-
-    // ✅ Charger uniquement les prestations disponibles
-    axios.get("http://localhost:8000/api/prestations")
-      .then((response) => {
-        setPrestations(response.data);
-      })
-      .catch((error) => {
-        console.error("Erreur lors du chargement des prestations :", error);
-      });
-  }, []);
-
-  const toggleForm = () => setShowForm(!showForm);
+  const toggleForm = () => {
+    setFormData({
+      id: null,
+      name: '',
+      email: '',
+      password: '',
+      telephone: '',
+      genre: '',
+      pays: '',
+      ville: '',
+      quartier: '',
+      code_postal: '',
+      prestations: [],
+      photo: null,
+    });
+    setShowForm(!showForm);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoChange = (e) => {
+    setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
   };
 
   const handleCheckboxChange = (e) => {
@@ -70,28 +85,26 @@ const AfficherPrestataires = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    try {
-      if (formData.id) {
-        await axios.put(`http://localhost:8000/api/prestataires/${formData.id}`, formData);
-      } else {
-        await axios.post("http://localhost:8000/api/prestataires", formData);
+    const formDataToSend = new FormData();
+    for (let key in formData) {
+      if (key === 'prestations') {
+        formData[key].forEach((id) => formDataToSend.append('prestations[]', id));
+      } else if (formData[key] !== null && (key !== 'password' || !formData.id)) {
+        formDataToSend.append(key, formData[key]);
       }
+    }
+
+    try {
+      const url = formData.id
+        ? `http://localhost:8000/api/prestataires/${formData.id}?_method=PUT`
+        : "http://localhost:8000/api/prestataires";
+
+      await axios.post(url, formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
       await fetchPrestataires();
-      setShowForm(false);
-      setFormData({
-        id: null,
-        name: '',
-        email: '',
-        password: '',
-        telephone: '',
-        genre: '',
-        pays: '',
-        ville: '',
-        quartier: '',
-        code_postal: '',
-        prestations: []
-      });
+      toggleForm();
     } catch (error) {
       console.error("Erreur lors de l'enregistrement :", error);
     }
@@ -111,13 +124,15 @@ const AfficherPrestataires = () => {
       id: prestataire.id,
       name: prestataire.user?.name || '',
       email: prestataire.user?.email || '',
+      password: '',
       telephone: prestataire.telephone,
       genre: prestataire.genre,
       pays: prestataire.pays,
       ville: prestataire.ville,
       quartier: prestataire.quartier,
       code_postal: prestataire.code_postal,
-      prestations: prestataire.prestations?.map((p) => p.id.toString()) || []
+      prestations: prestataire.prestations?.map((p) => p.id.toString()) || [],
+      photo: null,
     });
     setShowForm(true);
   };
@@ -134,18 +149,23 @@ const AfficherPrestataires = () => {
             {formData.id ? "Modifier Prestataire" : "Nouveau Prestataire"}
           </h3>
           <div className="grid grid-cols-2 gap-6">
-            {['name', 'email', 'password', 'telephone', 'genre', 'pays', 'ville', 'quartier', 'code_postal'].map(field => (
+            {['name', 'email', ...(formData.id ? [] : ['password']), 'telephone', 'genre', 'pays', 'ville', 'quartier', 'code_postal'].map(field => (
               <input
                 key={field}
                 name={field}
-                value={formData[field] || ''}
+                type={field === 'password' ? 'password' : 'text'}
+                value={formData[field]}
                 onChange={handleInputChange}
                 placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
                 className="p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 text-sm"
               />
             ))}
 
-            {/* ✅ LISTE DE CHECKBOXES POUR PRESTATIONS DISPONIBLES */}
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Photo :</label>
+              <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            </div>
+
             <div className="border rounded-lg p-3 col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Prestations :</label>
               <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
@@ -180,6 +200,7 @@ const AfficherPrestataires = () => {
         <table className="w-full bg-white border rounded-xl shadow text-sm">
           <thead className="bg-blue-900 text-white">
             <tr>
+              <th className="p-2 text-left text-xs">Photo</th>
               <th className="p-2 text-left text-xs">Nom</th>
               <th className="p-2 text-left text-xs">Email</th>
               <th className="p-2 text-left text-xs">Téléphone</th>
@@ -195,6 +216,21 @@ const AfficherPrestataires = () => {
             {prestataires.length > 0 ? (
               prestataires.map((prestataire) => (
                 <tr key={prestataire.id} className="border-t hover:bg-gray-50 transition-all">
+                  <td className="py-4 px-6">
+                    {prestataire.photo ? (
+                      <img
+                        src={`http://localhost:8000/storage/${prestataire.photo}`}
+                        alt="photo"
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ) : (
+                      <img
+                        src="path/to/MMNKp2Iu5f1YyITByEtnKg5xgCBWPuITKJy1rIcX.jpg" // Remplace par une image par défaut
+                        alt="photo par défaut"
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    )}
+                  </td>
                   <td className="py-4 px-6">{prestataire.user?.name || "Nom non disponible"}</td>
                   <td className="py-4 px-6">{prestataire.user?.email || "Email non disponible"}</td>
                   <td className="py-4 px-6">{prestataire.telephone}</td>
@@ -225,7 +261,7 @@ const AfficherPrestataires = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="9" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
+                <td colSpan="10" className="py-4 px-6 text-center text-gray-500">Aucun prestataire trouvé</td>
               </tr>
             )}
           </tbody>
