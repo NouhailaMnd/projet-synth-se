@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceReservation extends Model
 {
-
+    protected $table = 'service_reservation';
     protected $fillable = [
         'service_id',
         'reservation_id',
         'prestataire_id',
         'duree',
     ];
+    
     public function reservation()
-    {
-        return $this->belongsTo(Reservation::class);
-    }
+{
+    return $this->belongsTo(Reservation::class);
+}
+
 
     public function service()
     {

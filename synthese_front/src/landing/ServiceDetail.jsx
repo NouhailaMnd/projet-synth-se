@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Footer from "./footer";
 import axios from "axios";
+import NavBar from "../layouts/NavBar";
 
 export default function ServiceDetail() {
   const { id } = useParams();
@@ -28,15 +29,17 @@ export default function ServiceDetail() {
   const handleAddToCart = () => {
     const duree = parseFloat(selectedOption);
     const prix = parseFloat(service.prix);
-
+    const prestataireInfo = prestataires.find(p => p.id === selectedPrestataire);
+    
     const newItem = {
       id: service.id,
       nom: service.nom,
-      prix: prix, // ✅ champ 'prix' obligatoire pour Checkout
+      prix: prix,
       duree: duree,
       total: prix * duree,
       date: selectedDate,
-      prestataire: selectedPrestataire,
+      prestataire_id: selectedPrestataire,
+      prestataire_nom: prestataireInfo?.user?.name || "Inconnu",
     };
 
     const existingCart = JSON.parse(sessionStorage.getItem("cart")) || [];
@@ -55,6 +58,7 @@ export default function ServiceDetail() {
 
   return (
     <>
+      <NavBar />
       <div className="max-w-7xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-10">
         <div className="md:col-span-2">
           <h1 className="text-2xl font-bold mb-2">{service.nom}</h1>
@@ -132,7 +136,10 @@ export default function ServiceDetail() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-medium text-sm">Téléphone : {p.telephone}</p>
+                          <p className="font-medium text-sm">
+                            Nom : {p.user?.name || "Inconnu"}
+                          </p>
+                          <p className="text-sm">Téléphone : {p.telephone}</p>
                           <p className="text-sm">Ville : {p.ville}, Quartier : {p.quartier}</p>
                           <p className="text-sm text-gray-600">Genre : {p.genre}</p>
                         </div>
@@ -155,7 +162,9 @@ export default function ServiceDetail() {
 
           {selectedPrestataire && (
             <p className="text-sm text-gray-700 mb-2">
-              Prestataire sélectionné : #{selectedPrestataire}
+              Prestataire sélectionné : {
+                prestataires.find(p => p.id === selectedPrestataire)?.user?.name || "Inconnu"
+              }
             </p>
           )}
 

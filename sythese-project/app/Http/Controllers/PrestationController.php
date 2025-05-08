@@ -27,13 +27,14 @@ class PrestationController extends Controller
     }
 
     public function parPrestation($prestation_id): JsonResponse
-    {
+{
+    $prestation = Prestation::findOrFail($prestation_id);
 
-        // Récupérer la prestation spécifique
-            $prestation = Prestation::findOrFail($prestation_id);
+    // Charger la relation user sur chaque prestataire
+    $prestataires = $prestation->prestataires()->with('user')->get();
 
-            // Récupérer tous les prestataires associés à cette prestation
-            $prestataires = $prestation->prestataires;
-            return response()->json($prestataires);
-    }
+    return response()->json($prestataires);
+}
+    
+
 }
