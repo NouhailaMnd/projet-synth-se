@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\User;
 use App\Http\Controllers\Admin\PrestaController;
 use App\Http\Controllers\Admin\ServController;
-
+use Illuminate\Support\Facades\Storage;
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
@@ -43,6 +43,16 @@ Route::get('/prestations', function () {
 
 
 use App\Http\Controllers\Admin\StatisticController;
+Route::get('/prestataires/photos/{filename}', function ($filename) {
+    $path = storage_path('app/' . $filename);
+
+    if (file_exists($path)) {
+        return response()->file($path);
+    }
+
+    return response()->json(['message' => 'Image not found'], 404);
+});
+
 Route::get('/prestations-disponibles', [PrestaController::class, 'disponibles']);
 
 Route::get('/user-stats', [StatisticController::class, 'index']);

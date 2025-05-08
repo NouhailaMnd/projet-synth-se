@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;  // <-- Ajoutez cette lig
 class Prestation extends Model
 {
     protected $fillable = [
-        'nom',
-        'description',
-        'disponible',
+        'nom',          // Nom de la prestation
+        'description',  // Description de la prestation
+        'disponible', 
+
     ];
 
       
