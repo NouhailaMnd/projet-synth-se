@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Prestataire;
+use App\Models\Service;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;  // <-- Ajoutez cette ligne
 
 class Prestation extends Model
 {
@@ -11,6 +15,8 @@ class Prestation extends Model
         'description',
         'disponible',
     ];
+
+      
 
     public function services()
     {
@@ -21,9 +27,11 @@ class Prestation extends Model
     {
         return $this->hasMany(PrestationPrestataire::class);
     }
+    use HasFactory;
 
     public function prestataires()
     {
         return $this->belongsToMany(Prestataire::class, 'prestation_prestataire', 'prestation_id', 'prestataire_id');
     }
+
 }

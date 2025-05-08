@@ -12,6 +12,15 @@ import Contact from './landing/Contact';
 import HowItWorks from './landing/HowItWorks';
 import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
+import Dashboard from './pages/Dashboard'; 
+import AfficherPrestataire from './pages/AfficherPrestataire'; 
+import Layout from './components/Layout';  // Ajoutez le Layout ici
+import AfficherPrestations from './pages/AfficherPrestations';
+import UserTable from './pages/UserTable';
+import Gestionservices from './pages/Gestionservices';
+import UserStats from './pages/UserStats';
+
+
 
 function App() {
   return (
@@ -33,6 +42,59 @@ function App() {
         <Route path="/HowItWorks" element={<HowItWorks />} />
         <Route path="/ServiceDetail/:id" element={<ServiceDetail />} />
         <Route path="/checkout" element={<Checkout />} />
+        {/* Page sans layout */}
+
+        {/* Pages avec layout */}
+
+        <Route
+          path="/UserStats"
+          element={
+            
+            <Layout >
+  <UserStats />           
+  </Layout>
+          }
+        />
+        <Route
+          path="/UserTable"
+          element={
+            <Layout>
+              <UserTable />
+            </Layout>
+          }
+        />
+           <Route
+          path="/AfficherPrestataire"
+          element={
+            <Layout>
+              <AfficherPrestataire />
+            </Layout>
+          }
+        />
+  <Route
+          path="/AfficherPrestations"
+          element={
+            <Layout>
+              <AfficherPrestations />
+            </Layout>
+          }
+        />
+          <Route
+          path="/Gestionservices"
+          element={
+            <Layout>
+              <Gestionservices />
+            </Layout>
+          }
+        />
+        <Route
+          path="/Admin"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
       </Routes>
     </Router>
   );
