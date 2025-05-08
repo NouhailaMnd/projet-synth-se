@@ -107,7 +107,7 @@ function App() {
           }
         />
         <Route
-          path="/Admin"
+          path="/Dashboard"
           element={
             <Layout>
               <Dashboard />
