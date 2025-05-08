@@ -53,7 +53,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Client::class);
     }
-
+    use HasFactory;
     public function prestataire()
     {
         return $this->hasOne(Prestataire::class);

@@ -20,7 +20,12 @@ class Service extends Model
         return $this->belongsTo(Prestation::class);
     }
 
-    
+    use HasFactory;
+
+    public function reservations()
+    {
+        return $this->hasMany(ServiceReservation::class);
+    }
 
     public function serviceReservations()
     {

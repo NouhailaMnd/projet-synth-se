@@ -9,7 +9,7 @@ import AfficherPrestations from './pages/AfficherPrestations';
 import UserTable from './pages/UserTable';
 import Gestionservices from './pages/Gestionservices';
 import UserStats from './pages/UserStats';
-
+import ReservationTable from './pages/ReservationTable';
 
 
 function App() {
@@ -27,6 +27,15 @@ function App() {
             
             <Layout >
   <UserStats />           
+  </Layout>
+          }
+        />
+        <Route
+          path="/ReservationTable"
+          element={
+            
+            <Layout >
+  <ReservationTable />           
   </Layout>
           }
         />
