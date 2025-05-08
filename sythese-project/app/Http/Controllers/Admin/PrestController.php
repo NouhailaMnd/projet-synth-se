@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; 
 use App\Models\Prestation;
 use App\Models\PrestationPrestataire;
 use App\Models\Prestataire;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class PrestataireController extends Controller
+class PrestController extends Controller
 {
     // Récupérer tous les prestataires avec les prestations associées
     public function index()

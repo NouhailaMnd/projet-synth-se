@@ -2,13 +2,13 @@
 
 // app/Http/Controllers/ServiceController.php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; 
 use App\Models\Service;
 use App\Models\Prestation;
 use Illuminate\Http\Request;
 
-class ServiceController extends Controller
+class ServController extends Controller
 {
     public function index()
     {

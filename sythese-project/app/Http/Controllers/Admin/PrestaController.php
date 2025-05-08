@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; 
 use App\Models\Prestation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class PrestationController extends Controller
+class PrestaController extends Controller
 {
     // Retourner toutes les prestations
     public function index()
