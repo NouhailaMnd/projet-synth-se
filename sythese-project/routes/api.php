@@ -43,6 +43,11 @@ Route::get('/prestations', function () {
 
 
 use App\Http\Controllers\Admin\StatisticController;
+// routes/api.php
+use App\Http\Controllers\Admin\ReservController;
+
+Route::get('/reservations', [ReservController::class, 'index']);
+
 Route::get('/prestataires/photos/{filename}', function ($filename) {
     $path = storage_path('app/' . $filename);
 

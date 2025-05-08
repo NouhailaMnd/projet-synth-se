@@ -20,6 +20,7 @@ class Prestataire extends Model
         'code_postal',
         'photo',
     ];
+    use HasFactory;
 
     // Relation avec l'utilisateur
     public function user()

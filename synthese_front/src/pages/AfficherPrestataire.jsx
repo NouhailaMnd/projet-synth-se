@@ -197,53 +197,53 @@ const AfficherPrestataires = () => {
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full bg-white border rounded-xl shadow text-sm">
+        <table className="w-full bg-white border rounded-xl shadow text-sm table-auto">
           <thead className="bg-blue-900 text-white">
             <tr>
-              <th className="p-2 text-left text-xs">Photo</th>
-              <th className="p-2 text-left text-xs">Nom</th>
-              <th className="p-2 text-left text-xs">Email</th>
-              <th className="p-2 text-left text-xs">Téléphone</th>
-              <th className="p-2 text-left text-xs">Genre</th>
-              <th className="p-2 text-left text-xs">Prestation</th>
-              <th className="p-2 text-left text-xs">Ville</th>
-              <th className="p-2 text-left text-xs">Quartier</th>
-              <th className="p-2 text-left text-xs">Code postal</th>
-              <th className="p-2 text-left text-xs">Actions</th>
+              <th className="p-2 text-left text-xs w-20">Photo</th>
+              <th className="p-2 text-left text-xs w-28">Nom</th>
+              <th className="p-2 text-left text-xs w-30">Email</th>
+              <th className="p-2 text-left text-xs w-24">Téléphone</th>
+              <th className="p-2 text-left text-xs w-16">Genre</th>
+              <th className="p-2 text-left text-xs w-36">Prestation</th>
+              <th className="p-2 text-left text-xs w-28">Ville</th>
+              <th className="p-2 text-left text-xs w-28">Quartier</th>
+              <th className="p-2 text-left text-xs w-24">Code postal</th>
+              <th className="p-2 text-left text-xs w-32">Actions</th>
             </tr>
           </thead>
           <tbody>
             {prestataires.length > 0 ? (
               prestataires.map((prestataire) => (
                 <tr key={prestataire.id} className="border-t hover:bg-gray-50 transition-all">
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-2 w-20">
                     {prestataire.photo ? (
                       <img
                         src={`http://localhost:8000/storage/${prestataire.photo}`}
                         alt="photo"
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-12 h-12 object-cover rounded"
                       />
                     ) : (
                       <img
                         src="path/to/MMNKp2Iu5f1YyITByEtnKg5xgCBWPuITKJy1rIcX.jpg" // Remplace par une image par défaut
                         alt="photo par défaut"
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-12 h-12 object-cover rounded"
                       />
                     )}
                   </td>
-                  <td className="py-4 px-6">{prestataire.user?.name || "Nom non disponible"}</td>
-                  <td className="py-4 px-6">{prestataire.user?.email || "Email non disponible"}</td>
-                  <td className="py-4 px-6">{prestataire.telephone}</td>
-                  <td className="py-4 px-6">{prestataire.genre}</td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-2 w-28">{prestataire.user?.name || "Nom non disponible"}</td>
+                  <td className="py-4 px-2 w-30">{prestataire.user?.email || "Email non disponible"}</td>
+                  <td className="py-4 px-2 w-24">{prestataire.telephone}</td>
+                  <td className="py-4 px-2 w-16">{prestataire.genre}</td>
+                  <td className="py-4 px-2 w-36">
                     {prestataire.prestations?.length
                       ? prestataire.prestations.map((p) => p.nom).join(", ")
                       : "Aucune prestation"}
                   </td>
-                  <td className="py-4 px-6">{prestataire.ville}</td>
-                  <td className="py-4 px-6">{prestataire.quartier}</td>
-                  <td className="py-4 px-6">{prestataire.code_postal}</td>
-                  <td className="py-4 px-6 flex space-x-3">
+                  <td className="py-4 px-2 w-28">{prestataire.ville}</td>
+                  <td className="py-4 px-2 w-28">{prestataire.quartier}</td>
+                  <td className="py-4 px-2 w-24">{prestataire.code_postal}</td>
+                  <td className="py-4 px-2 w-32 flex space-x-3">
                     <button
                       onClick={() => handleEdit(prestataire)}
                       className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all"

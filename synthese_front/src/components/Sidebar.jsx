@@ -48,6 +48,16 @@ const links = [
       <path d="M12 2A10 10 0 002 12a10 10 0 002.26 6.33l-2 2a1 1 0 00-.21 1.09A1 1 0 003 22h9a10 10 0 000-20zm0 18H5.41l.93-.93a1 1 0 000-1.41A8 8 0 1112 20zm5-9H7a1 1 0 000 2h10a1 1 0 000-2zm-2 4H9a1 1 0 000 2h6a1 1 0 000-2zm-6-6h6a1 1 0 000-2H9a1 1 0 000 2z" />
     </svg>
   )},
+  { 
+    to: '/ReservationTable', 
+    label: 'Les Réservations', 
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2z" />
+      </svg>
+    )
+  }
+  
 ];
 
 const Sidebar = () => {
