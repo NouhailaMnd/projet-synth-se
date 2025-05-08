@@ -8,17 +8,44 @@ use App\Models\User;
 use App\Http\Controllers\Admin\PrestaController;
 use App\Http\Controllers\Admin\ServController;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Contact;
+use App\Http\Controllers\Admin\ContaController;
+
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
-
-
-
 use App\Http\Controllers\Admin\StatisticController;
-// routes/api.php
 use App\Http\Controllers\Admin\ReservController;
+use App\Http\Controllers\Admin\ReservationStatController;
+
+
+
+
+
+// Routes API dans routes/api.php
+
+use App\Models\Prestation;
+use App\Models\Service;
+use App\Models\Reservation;
+
+Route::get('/dashboard/stats', function () {
+    return response()->json([
+        'totalClients' => User::where('role', 'client')->count(),
+        'totalPrestataires' => User::where('role', 'prestataire')->count(),
+        'totalPrestations' => Prestation::count(),
+        'totalServices' => Service::count(),
+        'totalContacts' => Contact::count(),
+        'totalReservations' => Reservation::count(),
+    ]);
+});
+
+Route::get('/reservations/statistics', [ReservationStatController::class, 'index']);
 
 Route::get('/reservations', [ReservController::class, 'index']);
+
+Route::get('/contacts/latest', [ContaController::class, 'latest']);
+Route::post('/contacts', [ContaController::class, 'store']);
+Route::get('/contacts/{id}', [ContaController::class, 'show']); // si besoin
 
 Route::get('/prestataires/photos/{filename}', function ($filename) {
     $path = storage_path('app/' . $filename);
@@ -30,8 +57,17 @@ Route::get('/prestataires/photos/{filename}', function ($filename) {
     return response()->json(['message' => 'Image not found'], 404);
 });
 
-Route::get('/prestations-disponibles', [PrestaController::class, 'disponibles']);
 
+Route::get('/contacts/latest', function () {
+    return Contact::orderBy('created_at', 'desc')->take(4)->get();
+});
+Route::get('/prestations-disponibles', [PrestaController::class, 'disponibles']);
+Route::get('/users/latest-clients', function () {
+    return User::where('role', 'client')
+        ->latest()
+        ->take(4)
+        ->get(['id', 'name', 'email', 'created_at']);
+});
 Route::get('/user-stats', [StatisticController::class, 'index']);
 // Routes API pour Service
 Route::get('/services', [ServController::class, 'index']);       // Lister tous les services

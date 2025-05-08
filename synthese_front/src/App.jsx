@@ -10,6 +10,7 @@ import UserTable from './pages/UserTable';
 import Gestionservices from './pages/Gestionservices';
 import UserStats from './pages/UserStats';
 import ReservationTable from './pages/ReservationTable';
+import ReservationChart from './pages/ReservationChart';
 
 
 function App() {
@@ -36,6 +37,15 @@ function App() {
             
             <Layout >
   <ReservationTable />           
+  </Layout>
+          }
+        />
+         <Route
+          path="/ReservationChart"
+          element={
+            
+            <Layout >
+  <ReservationChart />           
   </Layout>
           }
         />
