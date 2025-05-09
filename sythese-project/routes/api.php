@@ -142,7 +142,6 @@ Route::get('/prestations', function () {
 
 Route::resource('prestataires', PrestController::class);
 
-
 Route::get('/prestations', [PrestaController::class, 'index']);
 Route::post('prestations', [PrestaController::class, 'store']);
 Route::get('/prestations/{id}', [PrestaController::class, 'show']);
