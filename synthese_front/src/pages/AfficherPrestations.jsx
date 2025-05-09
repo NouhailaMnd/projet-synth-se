@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 const PrestationForm = ({ prestation, onSave, onCancel }) => {
@@ -38,7 +38,15 @@ const PrestationForm = ({ prestation, onSave, onCancel }) => {
       alert("L'ID de la prestation est manquant !");
       return;
     }
-    onSave(formData);
+    onSave(formData, () => {
+      // Reset après sauvegarde (si création)
+      setFormData({
+        id: '',
+        nom: '',
+        description: '',
+        disponible: true,
+      });
+    });
   };
 
   return (
@@ -103,6 +111,9 @@ const AfficherPrestations = () => {
   const [editingPrestation, setEditingPrestation] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [prestationToDelete, setPrestationToDelete] = useState(null);
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     axios
@@ -111,20 +122,22 @@ const AfficherPrestations = () => {
       .catch((err) => console.error('Erreur chargement prestations:', err));
   }, []);
 
-  const handleAddPrestation = (newPrestation) => {
+  const handleAddPrestation = (newPrestation, resetForm) => {
     axios
       .post('/api/prestations', newPrestation)
       .then((res) => {
         setPrestations((prev) => [...prev, res.data]);
         setIsAdding(false);
+        resetForm();
+        showSuccess('Prestation ajoutée avec succès !');
       })
       .catch((err) => {
-        console.error('Erreur ajout prestation:', err);
-        alert('Erreur lors de l’ajout');
+        const message = err.response?.data?.message || 'Erreur lors de l’ajout';
+        alert(`Erreur : ${message}`);
       });
   };
 
-  const handleUpdatePrestation = (updated) => {
+  const handleUpdatePrestation = (updated, resetForm) => {
     axios
       .put(`/api/prestations/${updated.id}`, updated)
       .then(() => {
@@ -132,10 +145,11 @@ const AfficherPrestations = () => {
           prev.map((p) => (p.id === updated.id ? updated : p))
         );
         setEditingPrestation(null);
+        showSuccess('Prestation modifiée avec succès !');
       })
       .catch((err) => {
-        console.error('Erreur mise à jour prestation:', err);
-        alert('Erreur mise à jour');
+        const message = err.response?.data?.message || 'Erreur mise à jour';
+        alert(`Erreur : ${message}`);
       });
   };
 
@@ -147,27 +161,69 @@ const AfficherPrestations = () => {
           setPrestations((prev) => prev.filter((p) => p.id !== prestationToDelete.id));
           setIsDeleteModalOpen(false);
           setPrestationToDelete(null);
+          showSuccess('Prestation supprimée.');
         })
         .catch((err) => {
-          console.error('Erreur suppression prestation:', err);
-          alert('Erreur suppression');
+          const message = err.response?.data?.message || 'Erreur suppression';
+          alert(`Erreur : ${message}`);
         });
     }
   };
 
+  const showSuccess = (message) => {
+    setSuccessMessage(message);
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const filteredPrestations = useMemo(() => {
+    return prestations.filter((p) =>
+      p.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, prestations]);
+
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 border-b pb-2">Liste des Prestations</h2>
+<h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+        Liste des Prestations</h2>
 
-      <button
-        onClick={() => {
-          setIsAdding(!isAdding);
-          setEditingPrestation(null);
-        }}
-        className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4"
-      >
-        + Ajouter une prestation
-      </button>
+      {successMessage && (
+        <div className="bg-green-100 text-green-800 p-2 rounded mb-4 border border-green-400 text-sm">
+          {successMessage}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={() => {
+            setIsAdding(!isAdding);
+            setEditingPrestation(null);
+          }}
+          className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
+        >
+          + Ajouter une prestation
+        </button>
+
+        <button
+          onClick={() => setShowSearchBar((prev) => !prev)}
+          className="ml-2 text-blue-900 text-xl"
+          title="Rechercher"
+        >
+          🔍
+        </button>
+      </div>
+        <div className="mb-6 flex justify-end items-center gap-2">
+
+      {showSearchBar && (
+        <input
+          type="text"
+          placeholder="Rechercher par nom, description..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-4 w-full max-w-md p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-800"
+        />
+      )}
+      </div>
 
       {isAdding && <PrestationForm onSave={handleAddPrestation} onCancel={() => setIsAdding(false)} />}
 
@@ -190,7 +246,7 @@ const AfficherPrestations = () => {
             </tr>
           </thead>
           <tbody>
-            {prestations.map((p) => (
+            {filteredPrestations.map((p) => (
               <tr key={p.id} className="border-t hover:bg-blue-50">
                 <td className="p-2 text-xs">{p.nom}</td>
                 <td className="p-2 text-xs">{p.description}</td>
@@ -221,11 +277,12 @@ const AfficherPrestations = () => {
         </table>
       </div>
 
-      {/* Modal de confirmation de suppression */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-            <h3 className="text-lg font-semibold text-gray-900">Êtes-vous sûr de vouloir supprimer cette prestation ?</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Êtes-vous sûr de vouloir supprimer cette prestation ?
+            </h3>
             <div className="mt-4 flex justify-center space-x-4">
               <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                 Oui, supprimer
