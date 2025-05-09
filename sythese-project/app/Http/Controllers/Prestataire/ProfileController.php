@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Prestation;
 use App\Models\Prestataire;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -91,9 +92,43 @@ class ProfileController extends Controller
         // Supprimer l'association entre le prestataire et la prestation
         $prestataire->prestations()->detach($prestationId);
 
-        // Mettre à jour la colonne 'disponible' de la prestation à 0, si elle n'est plus associée
-        $prestation->update(['disponible' => 0]);
+        // Vérifier s'il reste encore des prestataires associés à cette prestation
+        $nombrePrestataires = $prestation->prestataires()->count();
+
+        // Mettre à jour la disponibilité en fonction du nombre d'associations restantes
+        $prestation->update(['disponible' => $nombrePrestataires > 0 ? 1 : 0]);
 
         return response()->json(['message' => 'Association supprimée avec succès']);
     }
+
+    public function reservationsDuPrestataire()
+{
+    $user = auth()->user(); // L'utilisateur connecté
+
+    // Récupérer le prestataire lié à cet utilisateur
+    $prestataire = Prestataire::where('user_id', $user->id)->first();
+
+    if (!$prestataire) {
+        return response()->json(['message' => 'Prestataire non trouvé'], 404);
+    }
+
+    // Récupérer les réservations liées à ce prestataire
+    $reservations = DB::table('service_reservation')
+        ->join('reservations', 'service_reservation.reservation_id', '=', 'reservations.id')
+        ->join('services', 'service_reservation.service_id', '=', 'services.id')
+        ->join('prestations', 'services.prestation_id', '=', 'prestations.id')
+        ->select(
+            'reservations.id as reservation_id',
+            'reservations.date_reservation',
+            'reservations.status',
+            'services.nom as service_nom',
+            'prestations.nom as prestation_nom',
+            'service_reservation.duree'
+        )
+        ->where('service_reservation.prestataire_id', $prestataire->id)
+        ->get();
+
+    return response()->json($reservations);
+}
+
 }
