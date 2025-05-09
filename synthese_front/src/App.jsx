@@ -13,8 +13,8 @@ import HowItWorks from './landing/HowItWorks';
 import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
 
-import DashboardPrestataire from './presatataire/pages/DashboardPrestataire';
-import PrestataireProfile from './presatataire/components/PrestataireProfile';
+import Profil from './presatataire/components/Profil';
+
 import PrestationsList from './presatataire/components/PrestationsList';
 
 import Dashboard from './pages/Dashboard'; 
@@ -26,21 +26,32 @@ import Gestionservices from './pages/Gestionservices';
 import UserStats from './pages/UserStats';
 import ReservationTable from './pages/ReservationTable';
 import ReservationChart from './pages/ReservationChart';
-import SideBare from './presatataire/components/SideBare';
+import RecentReservations from './presatataire/components/RecentReservations';
+import StatsCards from './presatataire/components/StatsCards';
+import MainLayout from './presatataire/components/MainLayout';
+
+
+
 
 
 function App() {
   return (
     <Router>
-      <NavBar />
+       {/*----------------------------kawtar------------------------------------*/}
       <Routes>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<RegisterPrestataire />} />
           <Route path="Entreprise" element={<RegisterEntreprise />} />
           <Route path="Client" element={<RegisterClient />} />
         </Route>
-
         <Route path="/login" element={<Login />} />
+        <Route path="/prestataire" element={<MainLayout />}>
+          <Route index element={<StatsCards/>} />
+          <Route path="list" element={<PrestationsList/>} />
+          <Route path="profil" element={<Profil/>} />
+          <Route path="Reservations" element={<RecentReservations/>} />
+        </Route>
+        {/*----------------------------kawtar------------------------------------*/}
         
         
         <Route path="/" element={<Index />} />
@@ -50,10 +61,7 @@ function App() {
         <Route path="/ServiceDetail/:id" element={<ServiceDetail />} />
         <Route path="/checkout" element={<Checkout />} />
 
-        <Route path="/DashboardPrestataire" element={<DashboardPrestataire />} />
-        <Route path="/profile" element={<PrestataireProfile />} />
-        <Route path="/PrestationsList" element={<PrestationsList />} />
-        <Route path="/SideBare" element={<SideBare />} />
+      
 
 
 
@@ -130,6 +138,7 @@ function App() {
           }
         />
       </Routes>
+      <NavBar />
     </Router>
 
     

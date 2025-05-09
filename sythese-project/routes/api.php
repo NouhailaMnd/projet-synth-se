@@ -4,10 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PrestationController;
-use App\Http\Controllers\Prestataire\ProfileController;
 
 
-use App\Http\Controllers\AuthController;
+
 
 
 use App\Models\Prestation;
@@ -46,14 +45,23 @@ Route::get('/prestations', function () {
     return response()->json(Prestation::all());
 });
 
-//prestataire kawtar
+///////////////////////////////////////////prestataire kawtar///////////////////////////////////////////////////////////
+use App\Http\Controllers\Prestataire\ProfileController;
+use App\Http\Controllers\AuthController;
+Route::post('/register',[AuthController::class,'register']);
+Route::post('/login',[AuthController::class,'login']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout',[AuthController::class,'logout']);
     Route::get('/prestataire/prestations', [ProfileController::class, 'afficherPrestationsAvecAssociation']);
     Route::post('/prestataire/prestations', [ProfileController::class, 'ajouterPrestation']);
     Route::delete('/prestataire/{prestataireId}/prestation/{prestationId}', [ProfileController::class, 'supprimerAssociation']);
     Route::get('/prestataire/reservations', [ProfileController::class, 'reservationsDuPrestataire']);
+    Route::get('/prestataire/profil', [ProfileController::class, 'profil']);
+    Route::put('/prestataire/modifier', [ProfileController::class, 'modifierProfil']);
+    
 
 });
+///////////////////////////////////////////prestataire kawtar///////////////////////////////////////////////////////////
 
 
 

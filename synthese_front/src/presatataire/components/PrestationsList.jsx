@@ -112,7 +112,7 @@ const PrestationsList = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+        <div className="w-full mx-auto">
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
           <div className="p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
             <h1 className="text-2xl md:text-3xl font-bold">Gestion des Prestations</h1>

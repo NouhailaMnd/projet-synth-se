@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Prestation;
 use App\Models\Prestataire;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -102,33 +103,119 @@ class ProfileController extends Controller
     }
 
     public function reservationsDuPrestataire()
-{
-    $user = auth()->user(); // L'utilisateur connecté
-
-    // Récupérer le prestataire lié à cet utilisateur
-    $prestataire = Prestataire::where('user_id', $user->id)->first();
-
-    if (!$prestataire) {
-        return response()->json(['message' => 'Prestataire non trouvé'], 404);
+    {
+        $user = auth()->user(); // L'utilisateur connecté
+    
+        // Récupérer le prestataire lié à cet utilisateur
+        $prestataire = Prestataire::where('user_id', $user->id)->first();
+    
+        if (!$prestataire) {
+            return response()->json(['message' => 'Prestataire non trouvé'], 404);
+        }
+    
+        // Récupérer les réservations liées à ce prestataire avec info client et adresse
+        $reservations = DB::table('service_reservation')
+            ->join('reservations', 'service_reservation.reservation_id', '=', 'reservations.id')
+            ->join('users', 'reservations.user_id', '=', 'users.id') // jointure avec le client
+            ->join('clients', 'users.id', '=', 'clients.user_id') // jointure avec la table clients pour l'adresse
+            ->join('services', 'service_reservation.service_id', '=', 'services.id')
+            ->join('prestations', 'services.prestation_id', '=', 'prestations.id')
+            ->select(
+                'reservations.id as reservation_id',
+                'reservations.date_reservation',
+                'reservations.status',
+    
+                // Infos client
+                'users.name as client_nom',
+                'users.email as client_email',
+                'clients.numero_telephone',
+                'clients.pays',
+                'clients.ville',
+                'clients.quartier',
+                'clients.code_postal',
+    
+                // Infos prestation
+                'services.nom as service_nom',
+                'prestations.nom as prestation_nom',
+                'service_reservation.duree'
+            )
+            ->where('service_reservation.prestataire_id', $prestataire->id)
+            ->get();
+    
+        return response()->json($reservations);
     }
 
-    // Récupérer les réservations liées à ce prestataire
-    $reservations = DB::table('service_reservation')
-        ->join('reservations', 'service_reservation.reservation_id', '=', 'reservations.id')
-        ->join('services', 'service_reservation.service_id', '=', 'services.id')
-        ->join('prestations', 'services.prestation_id', '=', 'prestations.id')
-        ->select(
-            'reservations.id as reservation_id',
-            'reservations.date_reservation',
-            'reservations.status',
-            'services.nom as service_nom',
-            'prestations.nom as prestation_nom',
-            'service_reservation.duree'
-        )
-        ->where('service_reservation.prestataire_id', $prestataire->id)
-        ->get();
 
-    return response()->json($reservations);
-}
+
+    public function profil(Request $request)
+    {
+        $user = $request->user();
+    
+        $prestataire = $user->prestataire;
+    
+        return response()->json([
+            'name' => $user->name,
+            'email' => $user->email,
+            'telephone' => $prestataire->telephone,
+            'genre' => $prestataire->genre,
+            'pays' => $prestataire->pays,
+            'ville' => $prestataire->ville,
+            'quartier' => $prestataire->quartier,
+            'code_postal' => $prestataire->code_postal,
+            'photo' => $prestataire->photo,
+        ]);
+    }
+    
+
+
+    public function modifierProfil(Request $request)
+    {
+        $user = $request->user();
+        $prestataire = $user->prestataire;
+    
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'telephone' => 'nullable|string',
+            'genre' => 'nullable|in:homme,femme',
+            'pays' => 'nullable|string',
+            'ville' => 'nullable|string',
+            'quartier' => 'nullable|string',
+            'code_postal' => 'nullable|string',
+            'motDePasseActuel' => 'nullable|string',
+            'nouveauMotDePasse' => 'nullable|string|min:6|same:confirmationMotDePasse',
+        ]);
+    
+        // Update User
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+    
+        // Update Prestataire
+        $prestataire->update([
+            'telephone' => $request->telephone,
+            'genre' => $request->genre,
+            'pays' => $request->pays,
+            'ville' => $request->ville,
+            'quartier' => $request->quartier,
+            'code_postal' => $request->code_postal,
+        ]);
+    
+        // Update Password
+        if ($request->motDePasseActuel && $request->nouveauMotDePasse) {
+            if (!Hash::check($request->motDePasseActuel, $user->password)) {
+                return response()->json(['message' => 'Mot de passe actuel incorrect'], 422);
+            }
+    
+            $user->update([
+                'password' => Hash::make($request->nouveauMotDePasse)
+            ]);
+        }
+    
+        return response()->json(['message' => 'Profil mis à jour avec succès.']);
+    }
+    
+
 
 }

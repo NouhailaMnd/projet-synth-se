@@ -14,6 +14,7 @@ const DashboardPrestataire = () => {
       <ReservationCalendar />
       <RecentReservations />
        <PrestationsList/>
+       <Profil/>
     </MainLayout>
   );
 };
