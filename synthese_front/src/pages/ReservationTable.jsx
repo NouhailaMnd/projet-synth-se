@@ -3,6 +3,8 @@ import axios from "axios";
 
 const ReservationTable = () => {
   const [reservations, setReservations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   useEffect(() => {
     axios.get("http://localhost:8000/api/reservations")
@@ -14,9 +16,63 @@ const ReservationTable = () => {
       });
   }, []);
 
+  const handleFilterChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredReservations = reservations.filter((reservation) => {
+    const userName = reservation.reservation?.user?.name || '';
+    const userEmail = reservation.reservation?.user?.email || '';
+    const prestationName = reservation.service?.prestation?.nom || '';
+    const serviceName = reservation.service?.nom || '';
+    const prestataireName = reservation.prestataire?.user?.name || '';
+    const prestatairePhone = reservation.prestataire?.telephone || '';
+    const reservationDate = reservation.reservation?.date_reservation || '';
+    const status = reservation.reservation?.status || '';
+
+    return (
+      userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prestationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prestataireName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prestatairePhone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reservationDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
-<div className="container mx-auto p-4 mt-12">
-<h2 className="text-2xl font-bold mb-2">Tableau des Réservations</h2>
+    <div className="container mx-auto p-4 ">
+      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+        Tableau des Réservations</h2>
+
+      {/* Conteneur Flex pour aligner l'icône de filtre à droite */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex-1"></div> {/* Cette div pousse l'icône à droite */}
+        {/* Icône de filtre à droite */}
+        <span
+          className="text-gray-500 text-xl cursor-pointer"
+          onClick={() => setIsFilterVisible(!isFilterVisible)}
+        >
+          🔍
+        </span>
+      </div>
+
+      {/* Affichage de la barre de recherche */}
+      {isFilterVisible && (
+        <div className="mb-6 flex justify-end items-center gap-2">
+          <input
+            type="text"
+            placeholder="Filtrer par Nom Client, Email, Prestation, Service, etc..."
+            className="border border-gray-300 rounded-lg px-4 py-2 w-1/3 text-sm"
+            value={searchTerm}
+            onChange={handleFilterChange}
+          />
+        </div>
+      )}
+
+      {/* Tableau des réservations */}
       <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
         <thead className="bg-blue-900 text-white">
           <tr className="border-b">
@@ -31,18 +87,24 @@ const ReservationTable = () => {
           </tr>
         </thead>
         <tbody>
-          {reservations.map((reservation) => (
-            <tr key={reservation.id} className="border-b">
-              <td className="py-2 px-4">{reservation.reservation?.user?.name || '-'}</td>
-              <td className="py-2 px-4">{reservation.reservation?.user?.email || '-'}</td>
-              <td className="py-2 px-4">{reservation.service?.prestation?.nom || '-'}</td>
-              <td className="py-2 px-4">{reservation.service?.nom || '-'}</td>
-              <td className="py-2 px-4">{reservation.prestataire?.user?.name || '-'}</td>
-              <td className="py-2 px-4">{reservation.prestataire?.telephone || '-'}</td>
-              <td className="py-2 px-4">{reservation.reservation?.date_reservation || '-'}</td>
-              <td className="py-2 px-4">{reservation.reservation?.status || '-'}</td>
+          {filteredReservations.length > 0 ? (
+            filteredReservations.map((reservation) => (
+              <tr key={reservation.id} className="border-b">
+                <td className="py-2 px-4">{reservation.reservation?.user?.name || '-'}</td>
+                <td className="py-2 px-4">{reservation.reservation?.user?.email || '-'}</td>
+                <td className="py-2 px-4">{reservation.service?.prestation?.nom || '-'}</td>
+                <td className="py-2 px-4">{reservation.service?.nom || '-'}</td>
+                <td className="py-2 px-4">{reservation.prestataire?.user?.name || '-'}</td>
+                <td className="py-2 px-4">{reservation.prestataire?.telephone || '-'}</td>
+                <td className="py-2 px-4">{reservation.reservation?.date_reservation || '-'}</td>
+                <td className="py-2 px-4">{reservation.reservation?.status || '-'}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="8" className="py-2 px-4 text-center">Aucune réservation ne correspond à votre recherche</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

@@ -3,6 +3,8 @@ import axios from "axios";
 
 const AfficherPrestataires = () => {
   const [prestataires, setPrestataires] = useState([]);
+  const [filteredPrestataires, setFilteredPrestataires] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
@@ -19,6 +21,7 @@ const AfficherPrestataires = () => {
     photo: null,
   });
   const [prestations, setPrestations] = useState([]);
+  const [showSearchInput, setShowSearchInput] = useState(false);  // Ajout de l'état pour l'affichage du champ de recherche
 
   useEffect(() => {
     fetchPrestataires();
@@ -26,6 +29,22 @@ const AfficherPrestataires = () => {
       .then((response) => setPrestations(response.data))
       .catch((error) => console.error("Erreur lors du chargement des prestations :", error));
   }, []);
+
+  useEffect(() => {
+    const term = searchTerm.toLowerCase();
+    setFilteredPrestataires(
+      prestataires.filter((prestataire) =>
+        prestataire.user?.name?.toLowerCase().includes(term) ||
+        prestataire.user?.email?.toLowerCase().includes(term) ||
+        prestataire.telephone?.toLowerCase().includes(term) ||
+        prestataire.genre?.toLowerCase().includes(term) ||
+        prestataire.prestations?.some((p) => p.nom.toLowerCase().includes(term)) ||
+        prestataire.ville?.toLowerCase().includes(term) ||
+        prestataire.quartier?.toLowerCase().includes(term) ||
+        prestataire.code_postal?.toLowerCase().includes(term)
+      )
+    );
+  }, [searchTerm, prestataires]);
 
   const fetchPrestataires = async () => {
     try {
@@ -138,10 +157,16 @@ const AfficherPrestataires = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 mt-20 bg-gray-50 rounded-xl">
+    <div className="p-6 max-w-6xl mx-auto text-black">
+      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+        Liste des Prestataires</h2>
       <button onClick={toggleForm} className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4">
         + Ajouter un Prestataire
       </button>
+<button onClick={() => setShowSearchInput(!showSearchInput)}   className="text-indigo-500 absolute right-10">
+
+          <span      className="w-1/2">🔍</span>
+        </button>    
 
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow-lg mb-6 border border-gray-200">
@@ -196,6 +221,19 @@ const AfficherPrestataires = () => {
         </div>
       )}
 
+        <div className="mb-6 flex justify-end items-center gap-2">
+        
+        {showSearchInput && (
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          className="mb-4 w-full max-w-md p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-800"
+          />
+        )}
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full bg-white border rounded-xl shadow text-sm table-auto">
           <thead className="bg-blue-900 text-white">
@@ -213,8 +251,8 @@ const AfficherPrestataires = () => {
             </tr>
           </thead>
           <tbody>
-            {prestataires.length > 0 ? (
-              prestataires.map((prestataire) => (
+            {filteredPrestataires.length > 0 ? (
+              filteredPrestataires.map((prestataire) => (
                 <tr key={prestataire.id} className="border-t hover:bg-gray-50 transition-all">
                   <td className="py-4 px-2 w-20">
                     {prestataire.photo ? (
@@ -225,7 +263,7 @@ const AfficherPrestataires = () => {
                       />
                     ) : (
                       <img
-                        src="path/to/MMNKp2Iu5f1YyITByEtnKg5xgCBWPuITKJy1rIcX.jpg" // Remplace par une image par défaut
+                        src="/images/default.jpg"
                         alt="photo par défaut"
                         className="w-12 h-12 object-cover rounded"
                       />
