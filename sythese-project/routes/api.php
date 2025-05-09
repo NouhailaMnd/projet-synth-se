@@ -46,11 +46,12 @@ Route::get('/prestations', function () {
     return response()->json(Prestation::all());
 });
 
-//prestataire kawtar 
+//prestataire kawtar
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/prestataire/prestations', [ProfileController::class, 'afficherPrestationsAvecAssociation']);
     Route::post('/prestataire/prestations', [ProfileController::class, 'ajouterPrestation']);
     Route::delete('/prestataire/{prestataireId}/prestation/{prestationId}', [ProfileController::class, 'supprimerAssociation']);
+    Route::get('/prestataire/reservations', [ProfileController::class, 'reservationsDuPrestataire']);
 
 });
 
