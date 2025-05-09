@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Prestation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // ✅ AJOUTE CECI
 
 class Service extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'nom',
         'description',
@@ -18,7 +20,12 @@ class Service extends Model
         return $this->belongsTo(Prestation::class);
     }
 
-    
+    use HasFactory;
+
+    public function reservations()
+    {
+        return $this->hasMany(ServiceReservation::class);
+    }
 
     public function serviceReservations()
     {

@@ -10,41 +10,90 @@ use App\Models\Prestataire;
 class ProfileController extends Controller
 {
     public function afficherPrestationsAvecAssociation()
-    {
-        $prestataire = auth()->user()->prestataire;
+{
+    // Récupérer le prestataire de l'utilisateur authentifié
+    $prestataire = auth()->user()->prestataire;
     
-        if (!$prestataire) {
-            return response()->json(['message' => 'Aucun prestataire lié à cet utilisateur'], 404);
-        }
-    
-        $prestations = Prestation::all();
-    
-        $prestationsAssociees = $prestataire->prestations->pluck('id')->toArray();
-    
-        $prestations = $prestations->map(function ($prestation) use ($prestationsAssociees) {
-            $prestation->est_associee = in_array($prestation->id, $prestationsAssociees);
-            return $prestation;
-        });
-        
-    
-        return response()->json($prestations);
+    // Vérifier si le prestataire existe
+    if (!$prestataire) {
+        return response()->json(['message' => 'Aucun prestataire lié à cet utilisateur'], 404);
     }
+    
+    // Récupérer toutes les prestations
+    $prestations = Prestation::all();
+    
+    // Récupérer les prestations associées au prestataire
+    $prestationsAssociees = $prestataire->prestations->pluck('id')->toArray();
+    
+    // Associer le statut 'est_associee' à chaque prestation
+    $prestations = $prestations->map(function ($prestation) use ($prestationsAssociees) {
+        $prestation->est_associee = in_array($prestation->id, $prestationsAssociees);
+        return $prestation;
+    });
+    
+    // Retourner le prestataire avec ses prestations associées
+    return response()->json([
+        'prestataire' => $prestataire,
+        'prestations' => $prestations
+    ]);
+}
     
 
     public function ajouterPrestation(Request $request)
     {
-        $prestataire = auth()->user();
+        // Récupérer l'utilisateur authentifié
+        $user = auth()->user();
+        
+        // Vérifier si l'utilisateur a un prestataire associé
+        $prestataire = $user->prestataire;
+
+        if (!$prestataire) {
+            return response()->json(['error' => 'Aucun prestataire associé à cet utilisateur.'], 400);
+        }
 
         // Valider l'ID de la prestation
         $request->validate([
             'prestation_id' => 'required|exists:prestations,id',
         ]);
 
+        $prestationId = $request->prestation_id;
+
+        // Vérifier si la prestation est déjà associée au prestataire
+        if ($prestataire->prestations()->where('prestation_id', $prestationId)->exists()) {
+            return response()->json(['message' => 'Cette prestation est déjà associée à ce prestataire.']);
+        }
+
         // Ajouter la prestation au prestataire
-        $prestataire->prestations()->attach($request->prestation_id);
+        $prestataire->prestations()->attach($prestationId);
+
+        // Mettre à jour la colonne 'disponible' à 1 pour la prestation
+        Prestation::where('id', $prestationId)->update(['disponible' => 1]);
 
         return response()->json(['message' => 'Prestation ajoutée avec succès !']);
     }
 
+    public function supprimerAssociation($prestataireId, $prestationId)
+    {
+        // Récupérer le prestataire
+        $prestataire = Prestataire::find($prestataireId);
 
+        if (!$prestataire) {
+            return response()->json(['message' => 'Prestataire non trouvé'], 404);
+        }
+
+        // Vérifier si la prestation existe
+        $prestation = Prestation::find($prestationId);
+
+        if (!$prestation) {
+            return response()->json(['message' => 'Prestation non trouvée'], 404);
+        }
+
+        // Supprimer l'association entre le prestataire et la prestation
+        $prestataire->prestations()->detach($prestationId);
+
+        // Mettre à jour la colonne 'disponible' de la prestation à 0, si elle n'est plus associée
+        $prestation->update(['disponible' => 0]);
+
+        return response()->json(['message' => 'Association supprimée avec succès']);
+    }
 }

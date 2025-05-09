@@ -1,0 +1,42 @@
+.btn-ajouter-prestataire {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-ajouter-prestataire:hover {
+    background-color: #45a049;
+  }
+  
+  .btn-modifier, .btn-supprimer {
+    text-decoration: none;
+    color: black;
+    margin-right: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  
+  .btn-modifier {
+    background-color: #4CAF50; /* Vert pour modifier */
+  }
+  
+  .btn-modifier:hover {
+    background-color: #45a049;
+  }
+  
+  .btn-supprimer {
+    background-color: #f44336; /* Rouge pour supprimer */
+  }
+  
+  .btn-supprimer:hover {
+    background-color: #e53935;
+  }
+  
+  .btn-modifier svg, .btn-supprimer svg {
+    margin-right: 5px;
+  }
+  

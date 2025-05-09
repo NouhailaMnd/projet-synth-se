@@ -12,9 +12,21 @@ import Contact from './landing/Contact';
 import HowItWorks from './landing/HowItWorks';
 import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
-import Dashboard from './presatataire/pages/Dashboard';
+
+import DashboardPrestataire from './presatataire/pages/DashboardPrestataire';
 import PrestataireProfile from './presatataire/components/PrestataireProfile';
 import PrestationsList from './presatataire/components/PrestationsList';
+
+import Dashboard from './pages/Dashboard'; 
+import AfficherPrestataire from './pages/AfficherPrestataire'; 
+import Layout from './components/Layout';  // Ajoutez le Layout ici
+import AfficherPrestations from './pages/AfficherPrestations';
+import UserTable from './pages/UserTable';
+import Gestionservices from './pages/Gestionservices';
+import UserStats from './pages/UserStats';
+import ReservationTable from './pages/ReservationTable';
+import ReservationChart from './pages/ReservationChart';
+import SideBare from './presatataire/components/SideBare';
 
 
 function App() {
@@ -37,11 +49,86 @@ function App() {
         <Route path="/HowItWorks" element={<HowItWorks />} />
         <Route path="/ServiceDetail/:id" element={<ServiceDetail />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
+
+        <Route path="/DashboardPrestataire" element={<DashboardPrestataire />} />
         <Route path="/profile" element={<PrestataireProfile />} />
         <Route path="/PrestationsList" element={<PrestationsList />} />
+        <Route path="/SideBare" element={<SideBare />} />
 
 
+
+
+        {/* Page sans layout */}
+
+        {/* Pages avec layout */}
+
+        <Route
+          path="/UserStats"
+          element={
+            
+            <Layout >
+  <UserStats />           
+  </Layout>
+          }
+        />
+        <Route
+          path="/ReservationTable"
+          element={
+            
+            <Layout >
+  <ReservationTable />           
+  </Layout>
+          }
+        />
+         <Route
+          path="/ReservationChart"
+          element={
+            
+            <Layout >
+  <ReservationChart />           
+  </Layout>
+          }
+        />
+        <Route
+          path="/UserTable"
+          element={
+            <Layout>
+              <UserTable />
+            </Layout>
+          }
+        />
+           <Route
+          path="/AfficherPrestataire"
+          element={
+            <Layout>
+              <AfficherPrestataire />
+            </Layout>
+          }
+        />
+  <Route
+          path="/AfficherPrestations"
+          element={
+            <Layout>
+              <AfficherPrestations />
+            </Layout>
+          }
+        />
+          <Route
+          path="/Gestionservices"
+          element={
+            <Layout>
+              <Gestionservices />
+            </Layout>
+          }
+        />
+        <Route
+          path="/Dashboard"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
       </Routes>
     </Router>
 
