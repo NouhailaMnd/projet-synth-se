@@ -11,21 +11,22 @@ export default function PaymentForm() {
     const total = cart.reduce((acc, item) => acc + (parseFloat(item.total) || 0), 0);
     setMontant(total);
 
-    const id = sessionStorage.getItem("user_id");
-    const name = sessionStorage.getItem("user_name");
-    const email = sessionStorage.getItem("user_email");
     const token = sessionStorage.getItem("token");
+    const userData = sessionStorage.getItem("user");
 
-    if (!token) {
+    if (!token || !userData) {
       alert("Vous devez être connecté pour effectuer un paiement.");
       window.location.href = "/login";
       return;
     }
 
-    if (id && name && email) {
-      setUser({ id, name, email });
-    } else {
-      alert("Informations utilisateur manquantes.");
+    try {
+      const parsedUser = JSON.parse(userData);
+      console.log("✅ Utilisateur récupéré :", parsedUser);
+      setUser(parsedUser);
+    } catch (e) {
+      console.error("❌ Erreur de parsing user :", e);
+      alert("Erreur lors de la récupération des informations utilisateur.");
       window.location.href = "/login";
     }
   }, []);
@@ -49,7 +50,7 @@ export default function PaymentForm() {
     try {
       const formattedCart = cart.map(item => ({
         id: item.id,
-        total: item.total* 1.2,
+        total: item.total * 1.2,
         duree: item.duree,
         prestataire_id: item.prestataire_id,
         date: item.date
@@ -59,9 +60,6 @@ export default function PaymentForm() {
         methode_paiment: method,
         cart: formattedCart
       };
-
-      console.log("Payload à envoyer :", payload);
-      console.log("Token utilisé :", token);
 
       const res = await fetch("http://127.0.0.1:8000/api/passer-commande", {
         method: "POST",
@@ -73,16 +71,13 @@ export default function PaymentForm() {
       });
 
       const data = await res.json();
-      console.log("Statut HTTP :", res.status);
-      console.log("Réponse JSON :", data);
 
       if (res.ok) {
         alert("✅ Paiement réussi !");
-        sessionStorage.setItem("last_order", JSON.stringify(cart)); // 👈 stocker la commande
+        sessionStorage.setItem("last_order", JSON.stringify(cart));
         sessionStorage.removeItem("cart");
         window.location.href = "/facture";
-      }
-       else {
+      } else {
         alert("Erreur : " + (data.message || "Échec du paiement"));
       }
     } catch (err) {
@@ -144,7 +139,7 @@ export default function PaymentForm() {
             )}
 
             <button type="submit" className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-bold text-lg">
-              Payer {montant* 1.2.toFixed(2)} €
+              Payer {(montant * 1.2).toFixed(2)} €
             </button>
           </form>
         </div>
