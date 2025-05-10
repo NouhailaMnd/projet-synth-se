@@ -9,7 +9,12 @@ use App\Http\Controllers\PrestationController;
 
 
 
+
+
 use App\Models\Prestation;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ContactController;
 
 use App\Http\Controllers\Admin\PrestController;
 use App\Http\Controllers\Admin\UserController;
@@ -36,14 +41,28 @@ Route::get('/prestataires/par-prestation/{id}', [PrestationController::class, 'p
 
 
 
+
+Route::middleware('auth:sanctum')->post('/passer-commande', [CommandeController::class, 'store']);
+
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
-Route::post('/logout',[AuthController::class,'logout'])->middleware('auth:sanctum');
+// routes/api.php
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
 Route::get('/prestations', function () {
     return response()->json(Prestation::all());
 });
+Route::post('/user/{id}/update', [clientController::class, 'update']);
+
+
+
+Route::get('/user/{id}', [clientController::class, 'show']);
+Route::get('/user/{id}/reservations', [clientController::class, 'getUserReservations']);
+Route::get('/user/{id}/paiements', [clientController::class, 'getUserPaiements']);
+
+
+Route::post('/contact', [ContactController::class, 'store']);
 
 ///////////////////////////////////////////prestataire kawtar///////////////////////////////////////////////////////////
 use App\Http\Controllers\Prestataire\ProfileController;

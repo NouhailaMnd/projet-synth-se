@@ -48,6 +48,10 @@ export default function AuthLayout() {
       <div className="flex-1 p-4">
         <div className="mt-4">
           <Outlet />
+          <p className="mt-6 text-xs text-gray-600 text-center">
+                                Retour ?{" "}
+                                <a href="/" className="border-b border-gray-500 border-dotted">à l'accueil</a>
+                            </p>
         </div>
       </div>
     </div>

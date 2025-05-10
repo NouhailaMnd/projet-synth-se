@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Footer from "./footer";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../layouts/NavBar";
 
 export default function ServiceList() {
   const [services, setServices] = useState([]);
@@ -64,6 +65,7 @@ export default function ServiceList() {
 
   return (
     <>
+    <NavBar />
       <div className="max-w-7xl mx-auto px-4 py-10">
         <h1 className="text-center text-2xl font-bold mb-6">Nos Services à Domicile</h1>
 

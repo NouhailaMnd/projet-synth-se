@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceReservation extends Model
 {
-    // Spécifie le nom exact de la table
-    protected $table = 'service_reservation';
 
+    // Spécifie le nom exact de la table
+
+
+    protected $table = 'service_reservation';
     protected $fillable = [
         'service_id',
         'reservation_id',
@@ -16,10 +18,14 @@ class ServiceReservation extends Model
         'duree',
     ];
 
+
+
+    
     public function reservation()
-    {
-        return $this->belongsTo(Reservation::class);
-    }
+{
+    return $this->belongsTo(Reservation::class);
+}
+
 
     public function service()
     {

@@ -1,10 +1,12 @@
 import React from "react";
 import Footer from "./footer"; // Adapte le chemin selon ton architecture
 import { Link } from "react-router-dom";
+import NavBar from "../layouts/NavBar";
 
 export default function HowItWorks() {
   return (
     <>
+          <NavBar />
       <section className="bg-white text-gray-800 py-16 px-4 max-w-7xl mx-auto">
         {/* Étapes */}
         <h2 className="text-center text-2xl md:text-3xl font-bold text-blue-600 mb-2">Comment ça marche ?</h2>

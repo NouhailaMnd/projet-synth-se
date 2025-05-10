@@ -5,13 +5,17 @@ import RegisterPrestataire from './pages/RegisterPrestataire';
 import RegisterClient from './pages/RegisterClient';
 import RegisterEntreprise from './pages/RegisterEntreprise';
 import Login from './pages/Login';
-import NavBar from "./layouts/NavBar";
+
 import Index from './landing';
 import ServiceList from './landing/ServiceList';
 import Contact from './landing/Contact';
 import HowItWorks from './landing/HowItWorks';
 import ServiceDetail from './landing/ServiceDetail';
 import Checkout from "./landing/Checkout";
+import Payment from './landing/Payment';
+import Invoice from './landing/Invoice';
+import ClientDashboard from './landing/ClientDashboard';
+
 
 import Profil from './presatataire/components/Profil';
 
@@ -37,7 +41,10 @@ import MainLayout from './presatataire/components/MainLayout';
 function App() {
   return (
     <Router>
+
        {/*----------------------------kawtar------------------------------------*/}
+
+      
       <Routes>
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<RegisterPrestataire />} />
@@ -60,6 +67,7 @@ function App() {
         <Route path="/HowItWorks" element={<HowItWorks />} />
         <Route path="/ServiceDetail/:id" element={<ServiceDetail />} />
         <Route path="/checkout" element={<Checkout />} />
+
 
       
 
@@ -137,8 +145,13 @@ function App() {
             </Layout>
           }
         />
+
+        <Route path="/payer" element={<Payment />} />
+        <Route path="/facture" element={<Invoice />} />
+        <Route path="/client" element={<ClientDashboard />} />
+
       </Routes>
-      <NavBar />
+     
     </Router>
 
     

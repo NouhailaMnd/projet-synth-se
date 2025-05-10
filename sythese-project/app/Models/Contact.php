@@ -9,6 +9,7 @@ class Contact extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
         'nom',
         'email',
@@ -16,4 +17,6 @@ class Contact extends Model
     ];
 
     // Vous pouvez également définir une règle de validation pour email, etc., selon vos besoins
+
+    // Autoriser l'attribution de masse pour ces champs
 }

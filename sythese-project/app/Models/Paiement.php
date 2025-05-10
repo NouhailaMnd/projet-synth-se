@@ -13,8 +13,10 @@ class Paiement extends Model
         'date_paiement',
         'status',
     ];
+    
     public function reservation()
-    {
-        return $this->belongsTo(Reservation::class);
-    }
+{
+    return $this->belongsTo(Reservation::class);
+}
+
 }
