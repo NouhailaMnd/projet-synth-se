@@ -26,7 +26,6 @@ use App\Models\Contact;
 use App\Http\Controllers\Admin\ContaController;
 
 
-
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
@@ -55,7 +54,7 @@ Route::get('/prestations', function () {
 });
 Route::post('/user/{id}/update', [clientController::class, 'update']);
 
-
+Route::put('users/{id}', [UserController::class, 'update']);
 
 Route::get('/user/{id}', [clientController::class, 'show']);
 Route::get('/user/{id}/reservations', [clientController::class, 'getUserReservations']);

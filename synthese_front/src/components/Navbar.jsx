@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail } from 'lucide-react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [openMailDropdown, setOpenMailDropdown] = useState(false);
@@ -10,15 +11,21 @@ const Navbar = () => {
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [openUserDropdown, setOpenUserDropdown] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/contacts/latest').then(res => {
-      setMessages(res.data);
-    });
+    // Récupérer les derniers messages et clients
+    axios.get('/api/contacts/latest').then(res => setMessages(res.data));
+    axios.get('/api/users/latest-clients').then(res => setClients(res.data));
 
-    axios.get('/api/users/latest-clients').then(res => {
-      setClients(res.data);
-    });
+    // Récupérer l'utilisateur connecté
+    const userData = sessionStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setUsername(user.name);
+    }
   }, []);
 
   const timeAgo = (date) => {
@@ -30,24 +37,22 @@ const Navbar = () => {
 
   const handleLogout = () => {
     console.log("Déconnexion");
-    // Ajouter ici la logique de déconnexion réelle
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
     <header className="h-16 bg-white shadow-lg px-6 flex items-center justify-between fixed top-0 left-64 right-0 z-50 border-b border-gray-200">
-      {/* Titre */}
-      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">
-        <span role="img" aria-label="dashboard"></span> Centre de contrôle
-      </h1>
+      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">Centre de contrôle</h1>
 
       <div className="flex items-center gap-6 relative">
-    
-
-        {/* Messages */}
+        {/* Icône Messages */}
         <div className="relative">
           <button
             onClick={() => setOpenMailDropdown(!openMailDropdown)}
-            className="relative text-gray-600 hover:text-blue-600 transition duration-200"
+            className="relative text-gray-600 hover:text-blue-600"
           >
             <Mail className="w-5 h-5" />
             <span className="absolute -top-1 -right-2 bg-green-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-semibold">
@@ -56,10 +61,8 @@ const Navbar = () => {
           </button>
 
           {openMailDropdown && (
-            <div className="absolute right-0 mt-2 w-80 bg-white shadow-xl rounded-lg z-50 border border-gray-200 animate-fade-in">
-              <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                📥 Messages récents
-              </div>
+            <div className="absolute right-0 mt-2 w-80 bg-white shadow-xl rounded-lg z-50 border border-gray-200">
+              <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">📥 Messages récents</div>
               <div className="p-2 max-h-80 overflow-auto divide-y divide-gray-100">
                 {messages.length === 0 ? (
                   <div className="text-gray-500 text-sm p-4 text-center">Aucun message</div>
@@ -79,15 +82,9 @@ const Navbar = () => {
                         className="w-8 h-8 rounded-full border"
                       />
                       <div className="flex-1">
-                        <div className="text-sm font-semibold text-gray-800 flex items-center gap-1">
-                          ✉️ {msg.nom}
-                        </div>
-                        <div className="text-xs text-gray-500 truncate">
-                          {msg.message.slice(0, 40)}...
-                        </div>
-                        <div className="text-[10px] text-gray-400 mt-1">
-                          {timeAgo(msg.created_at)} ago
-                        </div>
+                        <div className="text-sm font-semibold text-gray-800">✉️ {msg.nom}</div>
+                        <div className="text-xs text-gray-500 truncate">{msg.message.slice(0, 40)}...</div>
+                        <div className="text-[10px] text-gray-400 mt-1">{timeAgo(msg.created_at)} ago</div>
                       </div>
                     </div>
                   ))
@@ -97,11 +94,11 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Notifications */}
+        {/* Icône Notifications */}
         <div className="relative">
           <button
             onClick={() => setOpenNotificationDropdown(!openNotificationDropdown)}
-            className="relative text-gray-600 hover:text-blue-600 transition duration-200"
+            className="relative text-gray-600 hover:text-blue-600"
           >
             <Bell className="w-5 h-5" />
             <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-semibold">
@@ -110,10 +107,8 @@ const Navbar = () => {
           </button>
 
           {openNotificationDropdown && (
-            <div className="absolute right-0 mt-2 w-80 bg-white shadow-xl rounded-lg z-50 border border-gray-200 animate-fade-in">
-              <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">
-                🧑‍💼 Nouveaux clients
-              </div>
+            <div className="absolute right-0 mt-2 w-80 bg-white shadow-xl rounded-lg z-50 border border-gray-200">
+              <div className="px-4 py-3 border-b text-sm font-semibold text-gray-700">🧑‍💼 Nouveaux clients</div>
               <div className="p-2 max-h-80 overflow-auto divide-y divide-gray-100">
                 {clients.length === 0 ? (
                   <div className="text-gray-500 text-sm p-4 text-center">Aucun nouveau client</div>
@@ -133,12 +128,8 @@ const Navbar = () => {
                         className="w-8 h-8 rounded-full border"
                       />
                       <div className="flex-1">
-                        <div className="text-sm font-semibold text-gray-800">
-                          🆕 {client.name}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Inscrit {timeAgo(client.created_at)} ago
-                        </div>
+                        <div className="text-sm font-semibold text-gray-800">🆕 {client.name}</div>
+                        <div className="text-xs text-gray-500">Inscrit {timeAgo(client.created_at)} ago</div>
                       </div>
                     </div>
                   ))
@@ -148,14 +139,11 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Utilisateur */}
+        {/* Utilisateur connecté */}
         <div className="relative">
-          <div
-            className="flex items-center gap-3 cursor-pointer"
-            onClick={() => setOpenUserDropdown(!openUserDropdown)}
-          >
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setOpenUserDropdown(!openUserDropdown)}>
             <div className="text-sm text-gray-700 font-medium">
-              Bonjour, <span className="text-blue-600 font-semibold">Admin</span>
+              Bonjour, <span className="text-blue-600 font-semibold">{username || 'Admin'}</span>
             </div>
             <img
               src="https://i.pravatar.cc/40"
@@ -165,7 +153,7 @@ const Navbar = () => {
           </div>
 
           {openUserDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl rounded-lg z-50 border border-gray-200 animate-fade-in">
+            <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl rounded-lg z-50 border border-gray-200">
               <div className="p-2">
                 <button
                   onClick={handleLogout}
@@ -179,10 +167,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Pop-up message */}
+      {/* Pop-up Message */}
       {selectedMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative animate-fade-in">
+          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative">
             <button
               onClick={() => setSelectedMessage(null)}
               className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-lg font-bold"
@@ -191,21 +179,19 @@ const Navbar = () => {
             </button>
             <h2 className="text-xl font-bold mb-4 text-blue-600 border-b pb-2">📨 Détail du message</h2>
             <div className="space-y-2 text-sm text-gray-700">
-              <p><span className="font-medium">👤 Nom:</span> {selectedMessage.nom}</p>
-              <p><span className="font-medium">✉️ Email:</span> {selectedMessage.email}</p>
-              <p><span className="font-medium">📝 Message:</span><br /> {selectedMessage.message}</p>
-              <p className="text-[11px] text-gray-500 mt-3">
-                ⏰ Reçu {timeAgo(selectedMessage.created_at)} ago
-              </p>
+              <p><strong>👤 Nom:</strong> {selectedMessage.nom}</p>
+              <p><strong>✉️ Email:</strong> {selectedMessage.email}</p>
+              <p><strong>📝 Message:</strong><br /> {selectedMessage.message}</p>
+              <p className="text-[11px] text-gray-500 mt-3">⏰ Reçu {timeAgo(selectedMessage.created_at)} ago</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Pop-up client */}
+      {/* Pop-up Client */}
       {selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative animate-fade-in">
+          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative">
             <button
               onClick={() => setSelectedClient(null)}
               className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-lg font-bold"
@@ -214,11 +200,9 @@ const Navbar = () => {
             </button>
             <h2 className="text-xl font-bold mb-4 text-blue-600 border-b pb-2">🧾 Détails du client</h2>
             <div className="space-y-2 text-sm text-gray-700">
-              <p><span className="font-medium">👤 Nom:</span> {selectedClient.name}</p>
-              <p><span className="font-medium">✉️ Email:</span> {selectedClient.email}</p>
-              <p className="text-[11px] text-gray-500 mt-3">
-                ⏰ Inscrit {timeAgo(selectedClient.created_at)} ago
-              </p>
+              <p><strong>👤 Nom:</strong> {selectedClient.name}</p>
+              <p><strong>✉️ Email:</strong> {selectedClient.email}</p>
+              <p className="text-[11px] text-gray-500 mt-3">⏰ Inscrit {timeAgo(selectedClient.created_at)} ago</p>
             </div>
           </div>
         </div>
