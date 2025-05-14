@@ -52,7 +52,7 @@ const ReservationTable = () => {
         <div className="flex-1"></div> {/* Cette div pousse l'icône à droite */}
         {/* Icône de filtre à droite */}
         <span
-          className="text-gray-500 text-xl cursor-pointer"
+        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
           onClick={() => setIsFilterVisible(!isFilterVisible)}
         >
           🔍

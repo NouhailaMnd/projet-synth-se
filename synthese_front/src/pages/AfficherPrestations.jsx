@@ -206,7 +206,7 @@ const AfficherPrestations = () => {
 
         <button
           onClick={() => setShowSearchBar((prev) => !prev)}
-          className="ml-2 text-blue-900 text-xl"
+        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
           title="Rechercher"
         >
           🔍

@@ -100,6 +100,14 @@ use App\Http\Controllers\Admin\ReservationStatController;
 use App\Models\Service;
 use App\Models\Reservation;
 
+
+
+// routes/api.php
+Route::apiResource('services', App\Http\Controllers\Admin\ServController::class);
+Route::get('/prestations', function () {
+    return App\Models\Prestation::where('disponible', 1)->get();
+});
+
 Route::get('/dashboard/stats', function () {
     return response()->json([
         'totalClients' => User::where('role', 'client')->count(),
