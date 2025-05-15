@@ -33,6 +33,7 @@ import ReservationChart from './pages/ReservationChart';
 import RecentReservations from './presatataire/components/RecentReservations';
 import StatsCards from './presatataire/components/StatsCards';
 import MainLayout from './presatataire/components/MainLayout';
+import TypeAbonnementForm from './pages/TypeAbonnementForm'; 
 
 
 
@@ -93,6 +94,15 @@ function App() {
             
             <Layout >
   <ReservationTable />           
+  </Layout>
+          }
+        />
+        <Route
+          path="/TypeAbonnementForm"
+          element={
+            
+            <Layout >
+  <TypeAbonnementForm />           
   </Layout>
           }
         />

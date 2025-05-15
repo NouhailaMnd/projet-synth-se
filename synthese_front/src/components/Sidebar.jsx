@@ -22,7 +22,7 @@ const links = [
         label: 'Statistiques',
         children: [
           { to: '/UserStats', label: 'Utilisateur' },
-          { to: '/ReservationChart', label: 'Résérvation' },
+          { to: '/ReservationChart', label: 'Réservation' },
         ],
       },
     ],
@@ -55,8 +55,17 @@ const links = [
         <path d="M3 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2z" />
       </svg>
     )
-  }
-  
+  },
+  {
+  to: '/TypeAbonnementForm',
+  label: 'Gestion des Abonnements',
+  icon: (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 3C6.48 3 2 6.48 2 10s4.48 7 10 7 10-3.48 10-7-4.48-7-10-7zM12 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zM12 5C8.13 5 5 8.13 5 12s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7z" />
+    </svg>
+  ),
+}
+
 ];
 
 const Sidebar = () => {

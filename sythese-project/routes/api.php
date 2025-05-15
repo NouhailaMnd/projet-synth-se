@@ -25,7 +25,14 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Contact;
 use App\Http\Controllers\Admin\ContaController;
 
-
+use App\Http\Controllers\Admin\TyAbonnementController;
+Route::prefix('type-abonnements')->group(function () {
+    Route::get('/', [TyAbonnementController::class, 'index']);
+    Route::post('/', [TyAbonnementController::class, 'store']);
+    Route::put('/{id}', [TyAbonnementController::class, 'update']);
+    Route::delete('/{id}', [TyAbonnementController::class, 'destroy']);
+});
+Route::apiResource('type-abonnements', TyAbonnementController::class);
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');

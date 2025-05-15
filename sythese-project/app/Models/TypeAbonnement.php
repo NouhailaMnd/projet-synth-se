@@ -8,7 +8,7 @@ class TypeAbonnement extends Model
 {
     protected $fillable = [
         'type',
-        'prix',
+        'prix','duree_mois'
     ];
     public function abonnements()
     {
