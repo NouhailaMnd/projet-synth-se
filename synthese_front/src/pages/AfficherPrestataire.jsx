@@ -160,12 +160,15 @@ const AfficherPrestataires = () => {
     <div className="p-6 max-w-6xl mx-auto text-black">
       <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
         Liste des Prestataires</h2>
-      <button onClick={toggleForm} className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4">
+      <button onClick={toggleForm} 
+      className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4">
         + Ajouter un Prestataire
       </button>
 <button onClick={() => setShowSearchInput(!showSearchInput)}   className="text-indigo-500 absolute right-10">
 
-          <span      className="w-1/2">🔍</span>
+          <span    
+        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+            >🔍</span>
         </button>    
 
       {showForm && (

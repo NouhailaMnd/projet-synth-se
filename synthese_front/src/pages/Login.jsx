@@ -2,81 +2,70 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
 
+  const [errors, setErrors] = useState({});
 
- 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
+  async function handleRegister(e) {
+    e.preventDefault();
 
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-           
-          email: '',
-          password: '',
-         
-    });
-      
-        const [errors, setErrors] = useState({});
-      
-        const handleChange = (e) => {
-          const { name, value } = e.target;
-          setFormData(prev => ({ ...prev, [name]: value }));
-        };
-      
-        async function handleRegister(e) {
-          e.preventDefault();
-        
-          try {
-            const response = await fetch('/api/login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-              },
-              body: JSON.stringify(formData),
-            });
-        
-            if (!response.ok) {
-              if (response.status === 422) {
-                const errorData = await response.json();
-                setErrors(errorData.errors);
-              } else {
-                console.error("Erreur serveur :", response.status);
-                alert("Une erreur est survenue. Veuillez réessayer plus tard.");
-              }
-            } else {
-              const data = await response.json(); // <- ici tu récupères les données
-              console.log("connexion réussie :", data);
-        
-              const token = data.token; // <- ici tu prends le token
-              localStorage.setItem('authToken', token); // <- ici tu l'enregistres
-               // ✅ Stocker les infos utilisateur comme un seul objet
-              sessionStorage.setItem('token', data.token);
-              sessionStorage.setItem('user', JSON.stringify(data.user));
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-              // ✅ Supprimer les anciennes clés si elles existent
-              sessionStorage.removeItem('user_id');
-              sessionStorage.removeItem('user_name');
-              sessionStorage.removeItem('user_email');
-              sessionStorage.removeItem('user_role');
-
-              alert("Connexion réussie !");
-              navigate('/');
-              
-            }
-          } catch (error) {
-            console.error("Erreur réseau :", error);
-            alert("Impossible de contacter le serveur.");
-          }
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorData = await response.json();
+          setErrors(errorData.errors);
+        } else {
+          console.error("Erreur serveur :", response.status);
+          alert("Une erreur est survenue. Veuillez réessayer plus tard.");
         }
+      } else {
+        const data = await response.json();
+        console.log("Connexion réussie :", data);
 
+        // Stockage du token et utilisateur
+        localStorage.setItem('authToken', data.token);
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('user', JSON.stringify(data.user));
 
+        // Nettoyage ancien format
+        sessionStorage.removeItem('user_id');
+        sessionStorage.removeItem('user_name');
+        sessionStorage.removeItem('user_email');
+        sessionStorage.removeItem('user_role');
 
+        alert("Connexion réussie !");
 
-
-  
-
-  
+        // Redirection en fonction du rôle
+        if (data.redirect) {
+          navigate(data.redirect); // Ex: '/dashboard' pour admin
+        } else {
+          navigate('/'); // Page d'accueil
+        }
+      }
+    } catch (error) {
+      console.error("Erreur réseau :", error);
+      alert("Impossible de contacter le serveur.");
+    }
+  }
 
   return (
     <div className="w-full h-screen bg-white flex flex-col lg:flex-row">

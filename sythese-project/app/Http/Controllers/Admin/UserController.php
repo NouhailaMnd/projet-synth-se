@@ -22,30 +22,28 @@ class UserController extends Controller
     return response()->json($user, 201);
 }
 
-    // Méthode pour mettre à jour un utilisateur
-    public function update(Request $request, $id)
+     public function update(Request $request, $id)
     {
-        // Trouver l'utilisateur à mettre à jour
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'Utilisateur non trouvé'], 404);
+        }
 
         // Validation des données
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8',  // Le mot de passe est facultatif pour la mise à jour
+            'email' => 'required|string|email|max:255',
             'role' => 'required|string',
         ]);
 
-        // Mise à jour des données de l'utilisateur
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password ? bcrypt($request->password) : $user->password, // Le mot de passe est mis à jour si fourni
-            'role' => $request->role,
-        ]);
+        // Mise à jour de l'utilisateur
+        $user->update($validated);
 
-        return response()->json($user, 200);
+        return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => $user]);
     }
+     
+
     // Méthode pour supprimer un utilisateur
 public function destroy($id)
 {
