@@ -43,7 +43,7 @@ const SideBare = () => {
       {/* Sidebar */}
       <div className={`
         fixed md:relative z-40 w-64 h-screen transition-all duration-300 ease-in-out
-        bg-gradient-to-b from-indigo-700 to-purple-800 text-white
+        bg-gradient-to-b from-[#1d4ed8] to-[#3b82f6] text-white
         transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         shadow-xl
       `}>
