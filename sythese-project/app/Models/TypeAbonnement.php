@@ -9,6 +9,7 @@ class TypeAbonnement extends Model
     protected $fillable = [
         'type',
         'prix',
+        'duree_mois',
     ];
     public function abonnements()
     {

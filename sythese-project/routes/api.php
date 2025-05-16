@@ -64,8 +64,10 @@ Route::get('/user/{id}/paiements', [clientController::class, 'getUserPaiements']
 Route::post('/contact', [ContactController::class, 'store']);
 
 ///////////////////////////////////////////prestataire kawtar///////////////////////////////////////////////////////////
-use App\Http\Controllers\Prestataire\ProfileController;
+
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Prestataire\ProfileController;
+use App\Http\Controllers\Prestataire\AbonnementController;
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::middleware('auth:sanctum')->group(function () {
@@ -76,6 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/prestataire/reservations', [ProfileController::class, 'reservationsDuPrestataire']);
     Route::get('/prestataire/profil', [ProfileController::class, 'profil']);
     Route::put('/prestataire/modifier', [ProfileController::class, 'modifierProfil']);
+    // Récupérer la liste des types d'abonnements
+    Route::get('/type-abonnements', [AbonnementController::class, 'getTypesAbonnements']);
+    // Vérifier le statut de l'abonnement du prestataire connecté
+    Route::get('/abonnement/check-status', [AbonnementController::class, 'checkStatusConnected']);
+    // Créer (payer) un nouvel abonnement
+    Route::post('/abonnement', [AbonnementController::class, 'store']);
     
 
 });

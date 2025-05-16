@@ -62,31 +62,31 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
-public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|string|email',
-        'password' => 'required',
-    ]);
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required',
+        ]);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        $redirectUrl = null;
+
+        if ($user->role === 'admin') {
+            $redirectUrl = '/dashboard'; // URL que React gère
+        }
+
+        return response()->json([
+            'token' => $user->createToken('token-name')->plainTextToken,
+            'user' => $user,
+            'redirect' => $redirectUrl
+        ]);
     }
-
-    $redirectUrl = null;
-
-    if ($user->role === 'admin') {
-        $redirectUrl = '/dashboard'; // URL que React gère
-    }
-
-    return response()->json([
-        'token' => $user->createToken('token-name')->plainTextToken,
-        'user' => $user,
-        'redirect' => $redirectUrl
-    ]);
-}
          
 
     public function logout(Request $request)

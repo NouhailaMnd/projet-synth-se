@@ -16,11 +16,11 @@ class Abonnement extends Model
     
     public function prestataire()
     {
-        return $this->belongsTo(Prestataire::class);
+        return $this->belongsTo(Prestataire::class, 'prestataire_id');
     }
 
     public function typeAbonnement()
     {
-        return $this->belongsTo(TypeAbonnement::class);
+        return $this->belongsTo(TypeAbonnement::class, 'type_abonnement_id');
     }
 }

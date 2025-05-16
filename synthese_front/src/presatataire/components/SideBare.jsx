@@ -98,7 +98,7 @@ const SideBare = () => {
               {/* Réservations */}
               <li>
                 <NavLink
-                  to="/prestataire/Reservations"
+                  to="/prestataire/reservations"
                   className={({ isActive }) => `
                     flex items-center px-4 py-3 rounded-lg transition-all
                     ${isActive ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}
@@ -127,7 +127,7 @@ const SideBare = () => {
               {/* Analytics */}
               <li>
                 <NavLink
-                  to="/analytics"
+                  to="/prestataire/abonnement"
                   className={({ isActive }) => `
                     flex items-center px-4 py-3 rounded-lg transition-all
                     ${isActive ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}

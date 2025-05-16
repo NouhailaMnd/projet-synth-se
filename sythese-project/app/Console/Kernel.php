@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\UpdateReservationStatus::class,
+        \App\Console\Commands\UpdateAbonnementStatus::class,
     ];
 
     /**
@@ -25,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
 {
     $schedule->command('reservations:update-status')->daily();
-}
+    $schedule->command('app:update-abonnement-status')->daily();}
 
 
     /**
