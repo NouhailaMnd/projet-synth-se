@@ -86,7 +86,7 @@ export default function Checkout() {
                       />
                     </label>
                     <p>Prestataire : {item.prestataire_nom}</p>
-                    <p className="font-bold">Total : {item.total} €</p>
+                    <p className="font-bold">Total : {item.total} DH</p>
                   </div>
                   <button
                     onClick={() => handleRemove(idx)}
@@ -99,7 +99,7 @@ export default function Checkout() {
             </ul>
 
             <div className="mt-6 flex justify-between items-center font-semibold">
-              <span>Total global : {total.toFixed(2)} €</span>
+              <span>Total global : {total.toFixed(2)} DH</span>
               <button
   onClick={handleProceedToPayment}
   className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"

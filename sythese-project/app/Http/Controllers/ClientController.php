@@ -101,6 +101,17 @@ class ClientController extends Controller
     
         return response()->json(['message' => 'Profil mis à jour avec succès']);
     }
+    public function getProfile(Request $request)
+{
+    $user = $request->user(); // utilisateur connecté
+    $client = Client::where('user_id', $user->id)->first();
+
+    return response()->json([
+        'user' => $user,
+        'client' => $client,
+    ]);
+}
+
     
 
 }

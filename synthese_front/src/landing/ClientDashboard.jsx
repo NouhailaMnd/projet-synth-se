@@ -148,8 +148,8 @@ export default function ClientDashboard() {
                 <p className="text-sm text-gray-500">{p.date_paiement}</p>
               </div>
               <div className="flex items-center space-x-4">
-                <p className="font-semibold">{p.montant} €</p>
-                <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded">Facture</button>
+                <p className="font-semibold">{p.montant} DH</p>
+                <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded">Payé</button>
               </div>
             </div>
           ))}

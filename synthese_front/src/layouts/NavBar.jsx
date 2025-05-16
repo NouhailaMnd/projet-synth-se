@@ -45,9 +45,21 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
-            <Link to="/" className="text-xl font-bold text-blue-600">
-              Services<span className="text-gray-800">ÀDomicile</span>
-            </Link>
+            <Link to="/" className="flex items-center space-x-2">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 text-blue-600"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V20a1.25 1.25 0 0 1-1.25 1.25H4.25A1.25 1.25 0 0 1 3 20V9.75z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 21V12h6v9" />
+  </svg>
+  <span className="text-xl font-bold text-blue-600">ÀDomicile</span>
+</Link>
+
           </div>
 
           <nav className="hidden md:flex space-x-8">
