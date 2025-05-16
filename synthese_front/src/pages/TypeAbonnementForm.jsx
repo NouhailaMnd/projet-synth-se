@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+ 
 const options = [
   'Abonnement mensuel',
   'Abonnement trimestriel',
   'Abonnement semestriel',
   'Abonnement annuel',
 ];
-
+ 
 export default function TypeAbonnementForm() {
   const [type, setType] = useState('');
   const [prix, setPrix] = useState('');
@@ -19,7 +19,7 @@ export default function TypeAbonnementForm() {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
+ 
   const fetchAbonnements = async () => {
     const token = sessionStorage.getItem('token');
     try {
@@ -33,26 +33,26 @@ export default function TypeAbonnementForm() {
       console.error("Erreur lors du chargement :", error);
     }
   };
-
+ 
   useEffect(() => {
     fetchAbonnements();
   }, []);
-
+ 
   const handleTypeChange = (e) => {
     setType(e.target.value);
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+ 
     if (!type || !prix || isNaN(prix)) {
       alert("Le type est requis et le prix doit être un nombre.");
       return;
     }
-
+ 
     const token = sessionStorage.getItem('token');
     const data = { type, prix };
-
+ 
     try {
       if (editId) {
         await axios.put(`/api/type-abonnements/${editId}`, data, {
@@ -63,7 +63,7 @@ export default function TypeAbonnementForm() {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
-
+ 
       resetForm();
       fetchAbonnements();
     } catch (error) {
@@ -74,14 +74,14 @@ export default function TypeAbonnementForm() {
       }
     }
   };
-
+ 
   const resetForm = () => {
     setType('');
     setPrix('');
     setEditId(null);
     setErrors({});
   };
-
+ 
   const handleEdit = (item) => {
     setType(item.type);
     setPrix(item.prix);
@@ -89,12 +89,12 @@ export default function TypeAbonnementForm() {
     setShowForm(true);
     setErrors({});
   };
-
+ 
   const handleDeleteConfirmation = (id) => {
     setDeleteId(id);
     setShowModal(true);
   };
-
+ 
   const handleDelete = async () => {
     const token = sessionStorage.getItem('token');
     try {
@@ -107,7 +107,7 @@ export default function TypeAbonnementForm() {
       alert("Erreur lors de la suppression.");
     }
   };
-
+ 
   const filteredAbonnements = abonnements.filter((item) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -116,13 +116,13 @@ export default function TypeAbonnementForm() {
       item.duree_mois?.toString().includes(term)
     );
   });
-
+ 
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
       <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
         Gestion des abonnements
       </h2>
-
+ 
       <div className="flex items-center mb-4">
         <button
           onClick={() => {
@@ -133,7 +133,7 @@ export default function TypeAbonnementForm() {
         >
           {showForm ? 'Annuler' : '+ Ajouter abonnement'}
         </button>
-
+ 
         <div className="relative flex flex-col items-end ml-auto">
           <button
             onClick={() => setShowSearch(!showSearch)}
@@ -153,7 +153,7 @@ export default function TypeAbonnementForm() {
           )}
         </div>
       </div>
-
+ 
       {showForm && (
         <form onSubmit={handleSubmit} className="space-y-4 mb-6 border p-4 rounded bg-gray-50">
           <select
@@ -169,7 +169,7 @@ export default function TypeAbonnementForm() {
             ))}
           </select>
           {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
-
+ 
           <input
             type="text"
             value={prix}
@@ -178,7 +178,7 @@ export default function TypeAbonnementForm() {
             className="w-full p-2 border rounded"
           />
           {errors.prix && <p className="text-red-500 text-sm">{errors.prix}</p>}
-
+ 
           <button
             type="submit"
             className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
@@ -187,7 +187,7 @@ export default function TypeAbonnementForm() {
           </button>
         </form>
       )}
-
+ 
       <table className="min-w-full text-sm text-left border">
         <thead className="bg-blue-900 text-white">
           <tr>
@@ -221,7 +221,7 @@ export default function TypeAbonnementForm() {
           ))}
         </tbody>
       </table>
-
+ 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-md max-w-sm text-center">

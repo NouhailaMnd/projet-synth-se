@@ -85,7 +85,7 @@ const Abonnement = () => {
 
   return (
     <div className="flex-1 p-6 md:p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+      <div className=" mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-white">
           <h2 className="text-2xl md:text-3xl font-bold">Gestion d'abonnement</h2>

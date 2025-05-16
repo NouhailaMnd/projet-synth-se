@@ -97,7 +97,7 @@ export default function Profil() {
     <div className="flex-1 p-6 md:p-8 overflow-auto">
 <div className="w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 {/* Header */}
-        <div className="px-6 py-5 bg-gradient-to-r from-indigo-600 to-purple-600">
+        <div className="px-6 py-5 bg-gradient-to-r from-blue-600 to-blue-800 ">
           <h2 className="text-2xl font-bold text-white">Mon Profil</h2>
           <p className="text-indigo-100">Gérez vos informations personnelles et votre mot de passe</p>
         </div>

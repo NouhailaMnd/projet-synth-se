@@ -81,7 +81,7 @@ const ReservationsPrestataire = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100">
-          <div className="p-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+          <div className="p-8 bg-gradient-to-r from-blue-600 to-blue-800  text-white">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h1 className="text-3xl font-bold">Mes Réservations</h1>

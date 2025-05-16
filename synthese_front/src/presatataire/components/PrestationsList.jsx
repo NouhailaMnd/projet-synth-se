@@ -114,7 +114,7 @@ const PrestationsList = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
         <div className="w-full mx-auto">
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-          <div className="p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+          <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-800  text-white">
             <h1 className="text-2xl md:text-3xl font-bold">Gestion des Prestations</h1>
             <p className="mt-2 opacity-90">Prestataire: {prestataire.nom}</p>
           </div>

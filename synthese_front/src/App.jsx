@@ -31,7 +31,7 @@ import UserStats from './pages/UserStats';
 import ReservationTable from './pages/ReservationTable';
 import ReservationChart from './pages/ReservationChart';
 import RecentReservations from './presatataire/components/RecentReservations';
-import StatsCards from './presatataire/components/StatsCards';
+import DashboardPrestataire from './presatataire/components/DashboardPrestataire';
 import MainLayout from './presatataire/components/MainLayout';
 
 import Abonnement from './presatataire/components/Abonnement';
@@ -57,13 +57,13 @@ function App() {
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/prestataire" element={<MainLayout />}>
-          <Route index element={<StatsCards/>} />
+          <Route index element={<DashboardPrestataire/>} />
           <Route path="list" element={<PrestationsList/>} />
           <Route path="profil" element={<Profil/>} />
           <Route path="reservations" element={<RecentReservations/>} />
           <Route path="abonnement" element={<Abonnement/>} />
 
-        </Route>
+      </Route>
         {/*----------------------------kawtar------------------------------------*/}
         
         

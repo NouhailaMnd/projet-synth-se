@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Prestation;
 use App\Models\Prestataire;
+use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Abonnement;
 
 class ProfileController extends Controller
 {
@@ -216,6 +218,61 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Profil mis à jour avec succès.']);
     }
     
+
+
+
+
+    public function dashboard(Request $request)
+{
+    $user = $request->user();
+
+    // Trouver le prestataire correspondant
+    $prestataire = Prestataire::where('user_id', $user->id)->firstOrFail();
+
+    // 🔁 Compter les prestations associées à ce prestataire
+    $totalPrestations = DB::table('prestation_prestataire')
+        ->where('prestataire_id', $prestataire->id)
+        ->count();
+
+    // 🛠️ Compter les services liés aux prestations du prestataire
+    $serviceCount = DB::table('services')
+        ->join('prestation_prestataire', 'services.prestation_id', '=', 'prestation_prestataire.prestation_id')
+        ->where('prestation_prestataire.prestataire_id', $prestataire->id)
+        ->count();
+
+    // 📊 Statistiques des réservations faites auprès de ce prestataire
+    $reservationStats = DB::table('service_reservation')
+        ->join('reservations', 'service_reservation.reservation_id', '=', 'reservations.id')
+        ->where('service_reservation.prestataire_id', $prestataire->id)
+        ->select('reservations.status', DB::raw('count(*) as total'))
+        ->groupBy('reservations.status')
+        ->get();
+
+    // 📅 Réservations par mois
+    $reservationsByMonth = DB::table('service_reservation')
+        ->join('reservations', 'service_reservation.reservation_id', '=', 'reservations.id')
+        ->where('service_reservation.prestataire_id', $prestataire->id)
+        ->select(DB::raw('MONTH(reservations.date_reservation) as month'), DB::raw('count(*) as total'))
+        ->groupBy(DB::raw('MONTH(reservations.date_reservation)'))
+        ->get();
+
+    // 📦 Dernier abonnement avec type
+    $abonnement = Abonnement::where('prestataire_id', $prestataire->id)
+        ->with('typeAbonnement')
+        ->latest()
+        ->first();
+
+    return response()->json([
+        'total_prestations' => $totalPrestations,
+        'total_services' => $serviceCount,
+        'reservations_stats' => $reservationStats,
+        'reservations_by_month' => $reservationsByMonth,
+        'abonnement' => $abonnement,
+        'prestataire_info' => $prestataire
+    ]);
+}
+
+
 
 
 }
