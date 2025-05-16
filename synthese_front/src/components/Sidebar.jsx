@@ -47,15 +47,11 @@ const links = [
       <path d="M12 2A10 10 0 002 12a10 10 0 002.26 6.33l-2 2a1 1 0 00-.21 1.09A1 1 0 003 22h9a10 10 0 000-20zm0 18H5.41l.93-.93a1 1 0 000-1.41A8 8 0 1112 20zm5-9H7a1 1 0 000 2h10a1 1 0 000-2zm-2 4H9a1 1 0 000 2h6a1 1 0 000-2zm-6-6h6a1 1 0 000-2H9a1 1 0 000 2z" />
     </svg>
   )},
-  { 
-    to: '/ReservationTable', 
-    label: 'Les Réservations', 
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M3 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2z" />
-      </svg>
-    )
-  },
+  { to: '/ReservationTable', label: 'Les Réservations', icon: (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2z" />
+    </svg>
+  )},
   {
   to: '/TypeAbonnementForm',
   label: 'Gestion des Abonnements',
@@ -89,7 +85,7 @@ const Sidebar = () => {
               <button
                 onClick={() => toggleMenu(label)}
                 className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-300 
-                  ${isActive ? 'bg-blue-700 text-white font-bold shadow-lg' : 'hover:bg-blue-800 text-gray-300 hover:text-white'}`}
+                  ${isActive ? 'bg-blue-700 text-white font-bold shadow-lg' : 'hover:bg-blue-800 text-white hover:text-white'}`}
               >
                 <div className="flex items-center gap-3">
                   {icon && <span>{icon}</span>}
@@ -115,7 +111,7 @@ const Sidebar = () => {
               to={to}
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
-                ${isActive ? 'bg-blue-700 text-white font-bold shadow-lg' : 'hover:bg-blue-800 text-gray-300 hover:text-white'}`}
+                ${isActive ? 'bg-blue-700 text-white font-bold shadow-lg' : 'hover:bg-blue-800 text-white hover:text-white'}`}
             >
               {icon && <span>{icon}</span>}
               <span>{label}</span>
@@ -146,7 +142,7 @@ const Sidebar = () => {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-blue-950 via-black to-blue-900 shadow-2xl text-white flex flex-col justify-between"
+            className="fixed inset-y-0 left-0 z-40 w-64 bg-[#3b82f6] shadow-2xl text-white flex flex-col justify-between"
           >
             <div className="p-6">
               <h1 className="text-2xl font-extrabold mb-6 text-center">Admin Panel</h1>
@@ -158,7 +154,7 @@ const Sidebar = () => {
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-64 bg-gradient-to-b from-blue-950 via-black to-blue-900 shadow-lg text-white flex-col justify-between">
+      <aside className="hidden md:flex md:w-64 bg-[#3b82f6] shadow-lg text-white flex-col justify-between">
         <div className="p-6">
           <h1 className="text-2xl font-extrabold mb-6 text-center">Admin Panel</h1>
           <nav className="space-y-2">{renderLinks(links)}</nav>

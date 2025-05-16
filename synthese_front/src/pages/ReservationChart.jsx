@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -8,99 +8,84 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function ReservationStats() {
-  const [groupBy, setGroupBy] = useState('month');
-  const [stats, setStats] = useState([]);
+const ReservationChart = () => {
+  const [groupBy, setGroupBy] = useState('day');
+  const [stats, setStats] = useState({});
 
   useEffect(() => {
-    axios.get('/api/reservations/statistics', {
-      params: { type: groupBy }
-    }).then(response => {
-      setStats(response.data);
-    }).catch(error => {
-      console.error('Erreur chargement des stats', error);
-    });
+    axios
+      .get('/api/reservations/statistics', { params: { type: groupBy } })
+      .then((response) => {
+        console.log('Données reçues:', response.data);
+        setStats(response.data);
+      })
+      .catch((error) => {
+        console.error('Erreur chargement des stats', error);
+      });
   }, [groupBy]);
 
+  if (!stats || Object.keys(stats).length === 0) {
+    return <p>Aucune donnée disponible.</p>;
+  }
+
+  const labels = Object.keys(stats);
+  const statuses = ['enattente', 'confirme', 'encoure', 'termine'];
+  const colors = {
+    enattente: 'orange',
+    confirme: 'blue',
+    encoure: 'green',
+    termine: 'red'
+  };
+
   const chartData = {
-    labels: stats.map(stat => stat.label),
-    datasets: [
-      {
-        label: 'Réservations',
-        data: stats.map(stat => stat.count),
-        backgroundColor: 'rgb(27, 7, 141)',
-        borderColor: 'rgb(27, 7, 141)',
-        borderWidth: 1,
-      }
-    ]
+    labels,
+    datasets: statuses.map((status) => ({
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      data: labels.map((date) => stats[date][status] || 0),
+      backgroundColor: colors[status],
+    })),
   };
 
   const options = {
     responsive: true,
+    layout: {
+      padding: {
+        top: 10,  // Réduire l'espace en haut
+      }
+    },
     plugins: {
       legend: { position: 'top' },
-      tooltip: {
-        callbacks: {
-          label: function(tooltipItem) {
-            return `Total : ${tooltipItem.raw}`;
-          }
-        }
-      }
+      title: { display: true, text: 'Statistiques des réservations' },
     },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { autoSkip: true },
-      },
-      y: {
-        beginAtZero: true,
-        grid: { color: 'rgba(0,0,0,0.1)' }
-      }
-    },
-    elements: {
-      bar: {
-        barThickness: 2,
-        maxBarThickness: 4
-      }
-    }
   };
 
   return (
-    <div className="container mx-auto p-6">
+    
+   <div className="container mx-auto p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 mt-8">
-        <h2 className="text-4xl font-extrabold text-left text-indigo-600 mb-6 transform transition-all hover:scale-105 hover:text-indigo-800">
-          Statistiques des réservations
+        <h2 className="text-4xl font-extrabold text-left text-blue-600 mb-6">          Statistiques des Reservations
         </h2>
 
-        <div className="flex justify-end mb-6">
-          <div className="w-1/3">
-            <label htmlFor="groupBy" className="block text-sm font-medium text-gray-600 mb-2">Grouper par</label>
-            <select
-              id="groupBy"
-              value={groupBy}
-              onChange={(e) => setGroupBy(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-            >
-              <option value="day">Jour</option>
-              <option value="month">Mois</option>
-              <option value="year">Année</option>
-            </select>
-          </div>
-        </div>
+      <select
+        value={groupBy}
+        onChange={(e) => setGroupBy(e.target.value)}
+        className="mb-2 p-2 border"  // Réduit l'espace sous le select
+      >
+        <option value="day">Par jour</option>
+        <option value="month">Par mois</option>
+        <option value="year">Par année</option>
+      </select>
 
-        <div className="w-full max-w-3xl mx-auto bg-gray-50 p-4 rounded-lg shadow-lg">
-          <div className="h-[300px]">
-            <Bar data={chartData} options={options} />
-          </div>
-        </div>
-      </div>
-    </div>
+      <div style={{ height: '400px' }}>
+        <Bar data={chartData} options={options} />
+      </div>  </div>  </div>
+ 
   );
-}
+};
 
-export default ReservationStats;
+export default ReservationChart;

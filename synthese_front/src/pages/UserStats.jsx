@@ -62,9 +62,10 @@ function UserStats() {
   return (
     <div className="container mx-auto p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 mt-8">
-        <h2 className="text-4xl font-extrabold text-left text-indigo-600 mb-6">
-          Statistiques des utilisateurs
-        </h2>
+        <h2 className="text-4xl font-extrabold text-left text-blue-600 mb-6">
+  Statistiques des utilisateurs
+</h2>
+
 
         <div className="w-1/2 mb-6">
           <label htmlFor="groupBy" className="block text-sm font-medium text-gray-600 mb-2">Grouper par</label>
