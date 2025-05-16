@@ -106,6 +106,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/abonnement/check-status', [AbonnementController::class, 'checkStatusConnected']);
     // Créer (payer) un nouvel abonnement
     Route::post('/abonnement', [AbonnementController::class, 'store']);
+
+
+    Route::get('/prestataire/dashboard', [ProfileController::class, 'dashboard']);
     
 
 });

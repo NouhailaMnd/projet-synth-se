@@ -14,6 +14,9 @@ import {
   FiPieChart
 } from 'react-icons/fi';
 
+import { useNavigate } from 'react-router-dom';
+import { logout } from './logout';
+
 const SideBare = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -21,6 +24,13 @@ const SideBare = () => {
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const isActive = (path) => location.pathname === path;
+
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout(navigate);
+  };
 
   return (
     <>
@@ -73,7 +83,7 @@ const SideBare = () => {
                     ${isActive('/prestataire') ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}
                   `}
                 >
-                  <FiHome className="mr-3 text-lg" />
+                  <FiPieChart className="mr-3 text-lg" />
                   Tableau de bord
                   {isActive('/prestataire') && (
                     <span className="ml-auto w-2 h-2 bg-white rounded-full"></span>
@@ -106,7 +116,7 @@ const SideBare = () => {
                 >
                   <FiMessageSquare className="mr-3 text-lg" />
                   Réservations
-                  <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                  
                 </NavLink>
               </li>
 
@@ -124,7 +134,7 @@ const SideBare = () => {
                 </NavLink>
               </li>
 
-              {/* Analytics */}
+              {/* Abonnement */}
               <li>
                 <NavLink
                   to="/prestataire/abonnement"
@@ -133,22 +143,8 @@ const SideBare = () => {
                     ${isActive ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}
                   `}
                 >
-                  <FiPieChart className="mr-3 text-lg" />
-                  Analytics
-                </NavLink>
-              </li>
-
-              {/* Mon Profil */}
-              <li>
-                <NavLink
-                  to="/profil"
-                  className={({ isActive }) => `
-                    flex items-center px-4 py-3 rounded-lg transition-all
-                    ${isActive ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}
-                  `}
-                >
-                  <FiUser className="mr-3 text-lg" />
-                  Mon Profil
+                  <FiDollarSign className="mr-3 text-lg" />
+                  Abonnement
                 </NavLink>
               </li>
 
@@ -183,7 +179,8 @@ const SideBare = () => {
             <button className="
               flex items-center w-full px-4 py-3 rounded-lg
               hover:bg-indigo-600 transition-all text-left
-            ">
+              "
+              onClick={handleLogout}>
               <FiLogOut className="mr-3 text-lg" />
               Déconnexion
             </button>
