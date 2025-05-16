@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Bell } from 'lucide-react'; // Assure-toi d'avoir installé lucide-react
-
+import { ListChecks } from 'lucide-react';  
 const Navbar = () => {
   const [openMailDropdown, setOpenMailDropdown] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -14,7 +14,9 @@ const Navbar = () => {
   const [openUserDropdown, setOpenUserDropdown] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [userData, setUserData] = useState({ id: '', name: '', email: '' });
-
+const [tasks, setTasks] = useState([]);
+const [newTask, setNewTask] = useState('');
+const [showTaskPopup, setShowTaskPopup] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +43,20 @@ const Navbar = () => {
 
     fetchInitialData();
   }, []);
+const addTask = () => {
+  if (newTask.trim() !== '') {
+    setTasks([...tasks, { id: Date.now(), text: newTask, done: false }]);
+    setNewTask('');
+  }
+};
+
+const toggleTask = (id) => {
+  setTasks(tasks.map(task => task.id === id ? { ...task, done: !task.done } : task));
+};
+
+const deleteTask = (id) => {
+  setTasks(tasks.filter(task => task.id !== id));
+};
 
   const timeAgo = (date) => {
     const diff = Math.floor((new Date() - new Date(date)) / 60000);
@@ -70,7 +86,7 @@ const Navbar = () => {
 
   return (
     <header className="h-16 bg-white shadow-lg px-6 flex items-center justify-between fixed top-0 left-64 right-0 z-50 border-b border-gray-200">
-      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">Centre de contrôle</h1>
+      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">             </h1>
       <div className="flex items-center gap-6 relative">
         {/* Icône Messages */}
         <div className="relative">
@@ -162,6 +178,81 @@ const Navbar = () => {
             </div>
           )}
         </div>
+{/* Icône bloc-notes */}
+<button
+  onClick={() => setShowTaskPopup(true)}
+  className="relative text-gray-600 hover:text-blue-600"
+>
+  <ListChecks className="w-5 h-5" />
+</button>
+{showTaskPopup && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="bg-white p-6 md:p-8 rounded-2xl w-[95%] max-w-lg shadow-2xl relative transition-all duration-300">
+
+      {/* Bouton de fermeture */}
+      <button
+        onClick={() => setShowTaskPopup(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-red-600 text-2xl font-bold"
+      >
+        &times;
+      </button>
+
+      {/* Titre */}
+      <h2 className="text-2xl font-bold mb-6 text-blue-600 text-center flex items-center justify-center gap-2">
+        📝 Mes tâches
+      </h2>
+
+      {/* Formulaire d'ajout */}
+      <div className="flex gap-3 mb-4">
+        <input
+          type="text"
+          className="flex-1 border border-gray-300 p-2 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          placeholder="Ajouter une tâche..."
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+        />
+        <button
+          onClick={addTask}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm rounded-lg shadow"
+        >
+          Ajouter
+        </button>
+      </div>
+
+      {/* Liste des tâches */}
+      <ul className="space-y-2 max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        {tasks.length === 0 ? (
+          <li className="text-center text-gray-500 italic text-sm">Aucune tâche pour l’instant</li>
+        ) : (
+          tasks.map((task) => (
+            <li
+              key={task.id}
+              className="flex items-center justify-between bg-gray-100 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-200 transition"
+            >
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  onChange={() => toggleTask(task.id)}
+                  className="accent-blue-600"
+                />
+                <span className={`text-sm ${task.done ? "line-through text-gray-400" : "text-gray-800"}`}>
+                  {task.text}
+                </span>
+              </label>
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="text-red-500 hover:text-red-700 text-sm font-medium"
+              >
+                Supprimer
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
+    </div>
+  </div>
+)}
 
         {/* Utilisateur connecté */}
         <div className="relative">
@@ -179,113 +270,192 @@ const Navbar = () => {
             />
           </div>
 
-          {openUserDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-xl rounded-lg z-50 border border-gray-200">
-              <div className="p-2 space-y-2">
-                <button
-                  onClick={() => {
-                    setShowEditPopup(true);
-                    setOpenUserDropdown(false);
-                  }}
-                  className="w-full text-left text-gray-600 hover:bg-gray-100 py-2 px-3 rounded-md"
-                >
-                  Modifier mes infos
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left text-red-600 hover:bg-gray-100 py-2 px-3 rounded-md"
-                >
-                  Se déconnecter
-                </button>
-              </div>
-            </div>
-          )}
+         {openUserDropdown && (
+  <div className="absolute right-0 mt-2 w-56 bg-white shadow-2xl rounded-2xl z-50 border border-gray-200 overflow-hidden transition-all duration-300">
+    <div className="p-3 space-y-2">
+      <button
+        onClick={() => {
+          setShowEditPopup(true);
+          setOpenUserDropdown(false);
+        }}
+        className="w-full flex items-center gap-2 text-left text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors duration-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-gray-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+        Modifier mes infos
+      </button>
+      <button
+        onClick={handleLogout}
+        className="w-full flex items-center gap-2 text-left text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors duration-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 text-red-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
+        </svg>
+        Se déconnecter
+      </button>
+    </div>
+  </div>
+)}
+
         </div>
       </div>
 
       {/* Pop-ups */}
-      {selectedMessage && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative">
-            <button
-              onClick={() => setSelectedMessage(null)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-lg font-bold"
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-bold mb-4 text-blue-600 border-b pb-2">📨 Détail du message</h2>
-            <div className="space-y-2 text-sm text-gray-700">
-              <p><strong>👤 Nom:</strong> {selectedMessage.nom}</p>
-              <p><strong>✉️ Email:</strong> {selectedMessage.email}</p>
-              <p><strong>📝 Message:</strong><br /> {selectedMessage.message}</p>
-              <p className="text-[11px] text-gray-500 mt-3">⏰ Reçu {timeAgo(selectedMessage.created_at)} ago</p>
-            </div>
-          </div>
-        </div>
-      )}
+     {selectedMessage && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="bg-white p-6 md:p-8 rounded-2xl w-[95%] max-w-lg shadow-2xl relative transition-all duration-300">
+      
+      {/* Bouton de fermeture */}
+      <button
+        onClick={() => setSelectedMessage(null)}
+        className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-2xl font-bold"
+      >
+        &times;
+      </button>
 
-      {selectedClient && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative">
-            <button
-              onClick={() => setSelectedClient(null)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-lg font-bold"
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-bold mb-4 text-blue-600 border-b pb-2">🧾 Détails du client</h2>
-            <div className="space-y-2 text-sm text-gray-700">
-              <p><strong>👤 Nom:</strong> {selectedClient.name}</p>
-              <p><strong>✉️ Email:</strong> {selectedClient.email}</p>
-              <p className="text-[11px] text-gray-500 mt-3">⏰ Inscrit {timeAgo(selectedClient.created_at)} ago</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Titre */}
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-600 flex items-center justify-center gap-2">
+        📨 Détail du message
+      </h2>
 
-      {showEditPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-[95%] max-w-md shadow-2xl relative">
-            <button
-              onClick={() => setShowEditPopup(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-lg font-bold"
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-bold mb-4 text-blue-600 border-b pb-2">✏️ Modifier mes informations</h2>
-            <form onSubmit={handleUpdateUser} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">Nom</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 p-2 rounded-md"
-                  value={userData.name}
-                  onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600">Email</label>
-                <input
-                  type="email"
-                  className="w-full border border-gray-300 p-2 rounded-md"
-                  value={userData.email}
-                  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="text-right">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Enregistrer
-                </button>
-              </div>
-            </form>
+      {/* Contenu du message */}
+      <div className="space-y-4 text-base text-gray-700">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">👤</span>
+          <p><strong className="text-gray-800">Nom :</strong> {selectedMessage.nom}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xl">✉️</span>
+          <p><strong className="text-gray-800">Email :</strong> {selectedMessage.email}</p>
+        </div>
+
+        <div className="flex gap-2">
+          <span className="text-xl">📝</span>
+          <div>
+            <p className="font-semibold text-gray-800">Message :</p>
+            <p className="mt-1 text-gray-600 whitespace-pre-line">{selectedMessage.message}</p>
           </div>
         </div>
-      )}
+
+        <div className="flex items-center gap-2 text-sm text-gray-500 mt-4 italic">
+          <span className="text-lg">⏰</span>
+          <p>Reçu {timeAgo(selectedMessage.created_at)} ago</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{selectedClient && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="bg-white p-6 md:p-8 rounded-2xl w-[95%] max-w-lg shadow-2xl relative transition-all duration-300">
+      
+      {/* Bouton de fermeture */}
+      <button
+        onClick={() => setSelectedClient(null)}
+        className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-2xl font-bold"
+      >
+        &times;
+      </button>
+
+      {/* Titre */}
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-600 flex items-center justify-center gap-2">
+        🧾 Détails du client
+      </h2>
+
+      {/* Contenu client */}
+      <div className="space-y-4 text-base text-gray-700">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">👤</span>
+          <p><strong className="text-gray-800">Nom :</strong> {selectedClient.name}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xl">✉️</span>
+          <p><strong className="text-gray-800">Email :</strong> {selectedClient.email}</p>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-gray-500 mt-4 italic">
+          <span className="text-lg">⏰</span>
+          <p>Inscrit {timeAgo(selectedClient.created_at)} ago</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+     {showEditPopup && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="bg-white p-6 md:p-8 rounded-2xl w-[95%] max-w-lg shadow-2xl relative transition-all duration-300">
+      
+      {/* Bouton de fermeture */}
+      <button
+        onClick={() => setShowEditPopup(false)}
+        className="absolute top-3 right-3 text-gray-400 hover:text-red-600 text-2xl font-bold"
+      >
+        &times;
+      </button>
+
+      {/* Titre */}
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-600 flex items-center justify-center gap-2">
+        ✏️ Modifier mes informations
+      </h2>
+
+      {/* Formulaire */}
+      <form onSubmit={handleUpdateUser} className="space-y-5">
+        {/* Champ Nom */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Nom</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            value={userData.name}
+            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Champ Email */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+          <input
+            type="email"
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            value={userData.email}
+            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Bouton Submit */}
+        <div className="text-center">
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow-md transition-transform transform hover:scale-105"
+          >
+            💾 Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
     </header>
   );
 };
