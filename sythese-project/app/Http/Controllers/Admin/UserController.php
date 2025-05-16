@@ -22,27 +22,27 @@ class UserController extends Controller
     return response()->json($user, 201);
 }
 
-     public function update(Request $request, $id)
-    {
-        $user = User::find($id);
+    
 
-        if (!$user) {
-            return response()->json(['error' => 'Utilisateur non trouvé'], 404);
-        }
-
-        // Validation des données
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'role' => 'required|string',
-        ]);
-
-        // Mise à jour de l'utilisateur
-        $user->update($validated);
-
-        return response()->json(['message' => 'Utilisateur mis à jour avec succès', 'user' => $user]);
+public function update(Request $request)
+{
+    $user = User::find($request->id);
+    if (!$user) {
+        return response()->json(['error' => 'Utilisateur introuvable'], 404);
     }
-     
+
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+    ]);
+
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->save();
+
+    return response()->json($user);
+}
+
 
     // Méthode pour supprimer un utilisateur
 public function destroy($id)

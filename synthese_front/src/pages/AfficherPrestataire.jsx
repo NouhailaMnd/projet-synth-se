@@ -260,7 +260,7 @@ const AfficherPrestataires = () => {
                   <td className="py-4 px-2 w-20">
                     {prestataire.photo ? (
                       <img
-                        src={`http://localhost:8000/storage/${prestataire.photo}`}
+                        src={prestataire.photo}
                         alt="photo"
                         className="w-12 h-12 object-cover rounded"
                       />

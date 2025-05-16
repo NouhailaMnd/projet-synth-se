@@ -1,41 +1,36 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller; 
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class StatisticController extends Controller
 {
     public function index(Request $request)
     {
-        $role = $request->input('role', 'client');
         $groupBy = $request->input('group_by', 'month');
 
-        // Définir la requête de base
-        $query = User::where('role', $role);
+        // Choisir le champ de regroupement
+        $selectLabel = match ($groupBy) {
+            'day' => DB::raw('DATE(created_at) as label'),
+            'month' => DB::raw("DATE_FORMAT(created_at, '%Y-%m') as label"),
+            'year' => DB::raw('YEAR(created_at) as label'),
+            default => DB::raw("DATE_FORMAT(created_at, '%Y-%m') as label"),
+        };
 
-        // Appliquer le regroupement
-        switch ($groupBy) {
-            case 'day':
-                $query->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as total'))
-                    ->groupBy(DB::raw('DATE(created_at)'));
-                break;
-            case 'month':
-                $query->select(DB::raw('MONTH(created_at) as month'), DB::raw('YEAR(created_at) as year'), DB::raw('count(*) as total'))
-                    ->groupBy(DB::raw('MONTH(created_at), YEAR(created_at)'));
-                break;
-            case 'year':
-                $query->select(DB::raw('YEAR(created_at) as year'), DB::raw('count(*) as total'))
-                    ->groupBy(DB::raw('YEAR(created_at)'));
-                break;
-        }
+        // Requête groupée pour les deux rôles
+        $stats = DB::table('users')
+            ->select(
+                $selectLabel,
+                DB::raw("SUM(CASE WHEN role = 'client' THEN 1 ELSE 0 END) as client"),
+                DB::raw("SUM(CASE WHEN role = 'prestataire' THEN 1 ELSE 0 END) as prestataire")
+            )
+            ->groupBy('label')
+            ->orderBy('label')
+            ->get();
 
-        // Exécuter la requête et récupérer les résultats
-        $stats = $query->get();
-
-        // Retourner les résultats au frontend
         return response()->json($stats);
     }
 }

@@ -149,11 +149,11 @@ export default function Index() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <img
-                src={`/images/${service.photo}`}
-                alt={service.nom}
+               <img
+                      src={service.photo}
+                      alt={service.nom}
                 className="w-full h-48 object-cover"
-              />
+                    />
               <div className="p-4">
                 <p className="text-sm text-blue-600 mb-1">{service.prestation.nom}</p>
                 <div className="flex justify-between items-center mb-2">

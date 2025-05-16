@@ -25,11 +25,33 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Contact;
 use App\Http\Controllers\Admin\ContaController;
 
-
+use App\Http\Controllers\Admin\TyAbonnementController;
+Route::prefix('type-abonnements')->group(function () {
+    Route::get('/', [TyAbonnementController::class, 'index']);
+    Route::post('/', [TyAbonnementController::class, 'store']);
+    Route::put('/{id}', [TyAbonnementController::class, 'update']);
+    Route::delete('/{id}', [TyAbonnementController::class, 'destroy']);
+});
+Route::apiResource('type-abonnements', TyAbonnementController::class);
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
+Route::put('/users/update', function (Request $request) {
+    $user = auth()->user(); // ou récupérer via session si pas de token
 
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+    ]);
+
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+    ]);
+
+    return response()->json($user);
+});
+Route::put('/users/update', [UserController::class, 'update']);
 Route::get('/services', [ServiceController::class, 'index']);
 
 

@@ -117,6 +117,8 @@ const handleDelete = (id) => {
     );
   });
 
+  console.log(services);
+
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
       <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
@@ -269,7 +271,7 @@ const handleDelete = (id) => {
                 <td className="border px-2 py-1">
                   {service.photo && (
                     <img
-                      src={`http://localhost:8000/storage/${service.photo}`}
+                      src={service.photo}
                       alt={service.nom}
                       className="h-10 w-10 object-cover rounded"
                     />

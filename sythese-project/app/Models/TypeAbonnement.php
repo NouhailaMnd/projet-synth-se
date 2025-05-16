@@ -10,6 +10,9 @@ class TypeAbonnement extends Model
         'type',
         'prix',
         'duree_mois',
+
+        
+
     ];
     public function abonnements()
     {
