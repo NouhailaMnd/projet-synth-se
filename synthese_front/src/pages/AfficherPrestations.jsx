@@ -51,7 +51,7 @@ const PrestationForm = ({ prestation, onSave, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 rounded-xl shadow mb-6 border border-gray-200 max-w-xl">
-      <h3 className="text-lg font-semibold mb-4 text-blue-900">
+      <h3 className="text-lg font-semibold mb-4 text-blue-600">
         {prestation ? 'Modifier une Prestation' : 'Ajouter une Prestation'}
       </h3>
       <div className="space-y-3">
@@ -83,11 +83,11 @@ const PrestationForm = ({ prestation, onSave, onCancel }) => {
             name="disponible"
             checked={formData.disponible}
             onChange={handleChange}
-            className="accent-blue-900"
+            className="accent-blue-600"
           />
         </div>
         <div className="flex space-x-2">
-          <button type="submit" className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800">
+          <button type="submit" className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800">
             {prestation ? 'Enregistrer' : 'Ajouter'}
           </button>
           {onCancel && (
@@ -184,7 +184,7 @@ const AfficherPrestations = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
-<h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+<h2 className="text-2xl font-bold text-blue-600 mb-6 mt-20 border-b pb-2">
         Liste des Prestations</h2>
 
       {successMessage && (
@@ -199,14 +199,14 @@ const AfficherPrestations = () => {
             setIsAdding(!isAdding);
             setEditingPrestation(null);
           }}
-          className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
+          className="bg-blue-600 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
         >
           + Ajouter une prestation
         </button>
 
         <button
           onClick={() => setShowSearchBar((prev) => !prev)}
-        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
           title="Rechercher"
         >
           🔍
@@ -237,7 +237,7 @@ const AfficherPrestations = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white border rounded-xl shadow text-sm">
-          <thead className="bg-blue-900 text-white">
+          <thead className="bg-blue-600 text-white">
             <tr>
               <th className="p-2 text-left text-xs">Nom</th>
               <th className="p-2 text-left text-xs">Description</th>
@@ -280,7 +280,7 @@ const AfficherPrestations = () => {
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-600">
               Êtes-vous sûr de vouloir supprimer cette prestation ?
             </h3>
             <div className="mt-4 flex justify-center space-x-4">

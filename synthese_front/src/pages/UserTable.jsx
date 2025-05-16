@@ -49,14 +49,14 @@ const UserTable = () => {
 
   return (
     <div className="p-6 mt-20 max-w-6xl mx-auto text-black">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-6 border-b pb-2">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6 mt-6 border-b pb-2">
         Liste des Utilisateurs
       </h2>
 
       {/* Conteneur d'icône de recherche positionnée à droite */}
       <div className="mb-6 flex justify-end items-center gap-2">
         <span 
-        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
           onClick={() => setIsSearchVisible(!isSearchVisible)}
         >
           🔍
@@ -87,7 +87,7 @@ const UserTable = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white border rounded-xl shadow text-sm">
-          <thead className="bg-blue-900 text-white">
+          <thead className="bg-blue-600 text-white">
             <tr>
               <th className="p-2 text-left text-xs">Nom</th>
               <th className="p-2 text-left text-xs">Email</th>
@@ -129,7 +129,7 @@ const UserTable = () => {
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm w-full">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-gray-600">
               Supprimer l'utilisateur ?
             </h3>
             <p className="text-sm text-gray-700 mt-2">

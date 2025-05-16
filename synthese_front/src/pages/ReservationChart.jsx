@@ -68,8 +68,7 @@ const ReservationChart = () => {
     
    <div className="container mx-auto p-6">
       <div className="bg-white shadow-xl rounded-lg p-6 mt-8">
-        <h2 className="text-4xl font-extrabold text-left text-indigo-600 mb-6">
-          Statistiques des Reservations
+        <h2 className="text-4xl font-extrabold text-left text-blue-600 mb-6">          Statistiques des Reservations
         </h2>
 
       <select

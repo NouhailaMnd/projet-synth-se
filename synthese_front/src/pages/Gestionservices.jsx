@@ -121,7 +121,7 @@ const handleDelete = (id) => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6 mt-20 border-b pb-2">
         Liste des Services
       </h2>
 
@@ -158,14 +158,14 @@ const handleDelete = (id) => {
             setForm({ nom: "", description: "", prestation_id: "", prix: "", photo: null });
             setEditingId(null);
           }}
-          className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4"
+          className="bg-blue-600 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4"
         >
           {showForm ? "Fermer le formulaire" : "+ Ajouter un service"}
         </button>
 
         <button
           onClick={() => setShowSearch(!showSearch)}
-        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
         >
           🔍
         </button>
@@ -251,7 +251,7 @@ const handleDelete = (id) => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-blue-900 text-white">
+          <thead className="bg-blue-600 text-white">
             <tr>
               <th className="border px-2 py-1 text-left">Nom</th>
               <th className="border px-2 py-1 text-left">Description</th>
