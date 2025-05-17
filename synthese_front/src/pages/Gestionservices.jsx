@@ -264,12 +264,12 @@ const handleDelete = (id) => {
            <table className="min-w-full border border-gray-300 text-sm">
         <thead className="bg-blue-600 text-white">
           <tr>
-             <th className="border px-2 py-1 text-left">Photo</th>
-            <th className="border px-2 py-1 text-left">Nom</th>
-            <th className="border px-2 py-1 text-left">Description</th>
-            <th className="border px-2 py-1 text-left">Prestation</th>
-            <th className="border px-2 py-1 text-left">Prix (€)</th>
-            <th className="border px-2 py-1 text-left">Action</th>
+             <th className=" px-2 py-1 text-left">Photo</th>
+            <th className=" px-2 py-1 text-left">Nom</th>
+            <th className=" px-2 py-1 text-left">Description</th>
+            <th className=" px-2 py-1 text-left">Prestation</th>
+            <th className=" px-2 py-1 text-left">Prix (€)</th>
+            <th className=" px-2 py-1 text-left">Action</th>
           </tr>
         </thead>
         <tbody>

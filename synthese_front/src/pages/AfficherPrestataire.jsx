@@ -221,7 +221,9 @@ const handleImageClick = (imageUrl) => {
         onClick={() => setShowSearchInput(!showSearchInput)}
         className="text-indigo-500 absolute right-10"
       >
-        <span className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2">
+        <span 
+        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+        >
           🔍
         </span>
       </button>
@@ -332,17 +334,17 @@ const handleImageClick = (imageUrl) => {
         </form>
       )}
 
-      <table className="w-full table-auto border border-gray-300 text-sm">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2 border">Photo</th>
-            <th className="p-2 border">Nom</th>
-            <th className="p-2 border">Email</th>
-            <th className="p-2 border">Téléphone</th>
-            <th className="p-2 border">Ville</th>
-            <th className="p-2 border">Région</th>
-            <th className="p-2 border">Prestations</th>
-            <th className="p-2 border">Action</th>
+           <table className="min-w-full border border-gray-300 text-sm">
+        <thead className="bg-blue-600 text-white">
+          <tr className=" text-left">
+            <th className="p-2 ">Photo</th>
+            <th className="p-2 ">Nom</th>
+            <th className="p-2 ">Email</th>
+            <th className="p-2 ">Téléphone</th>
+            <th className="p-2 ">Ville</th>
+            <th className="p-2 ">Région</th>
+            <th className="p-2 ">Prestations</th>
+            <th className="p-2 ">Action</th>
           </tr>
         </thead>
         <tbody>
