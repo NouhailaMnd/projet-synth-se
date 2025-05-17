@@ -9,23 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // database/migrations/xxxx_xx_xx_add_duree_to_type_abonnements_table.php
-
-public function up()
-{
-    Schema::table('type_abonnements', function (Blueprint $table) {
-        $table->integer('duree')->default(1);
-    });
-}
-
+    public function up(): void
+    {
+        Schema::table('clients', function (Blueprint $table) {
+             $table->renameColumn('pays', 'region');
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('type_abonnements', function (Blueprint $table) {
-            //
+        Schema::table('clients', function (Blueprint $table) {
+              $table->renameColumn('region', 'pays');
         });
     }
 };

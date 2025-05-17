@@ -207,7 +207,7 @@ const DashboardPrestataire = () => {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Informations du prestataire</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <p className="text-gray-600"><span className="font-medium">Pays:</span> {dashboardData.prestataire_info.pays || 'Non renseigné'}</p>
+            <p className="text-gray-600"><span className="font-medium">Pays:</span> {dashboardData.prestataire_info.region || 'Non renseigné'}</p>
             <p className="text-gray-600"><span className="font-medium">Ville:</span> {dashboardData.prestataire_info.ville || 'Non renseigné'}</p>
             <p className="text-gray-600"><span className="font-medium">Quartier:</span> {dashboardData.prestataire_info.quartier || 'Non renseigné'}</p>
           </div>

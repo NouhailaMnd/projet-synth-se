@@ -31,7 +31,7 @@ class AuthController extends Controller
         if ($user->role === 'client') {
             $user->client()->create([
                 'numero_telephone' => $request->numero_telephone,
-                'pays' => $request->pays,
+                'region' => $request->region,
                 'ville' => $request->ville,
                 'quartier' => $request->quartier,
                 'code_postal' => $request->code_postal,
@@ -40,7 +40,7 @@ class AuthController extends Controller
             $user->prestataire()->create([
                 'telephone' => $request->telephone,
                 'genre' => $request->genre,
-                'pays' => $request->pays,
+                'region' => $request->region,
                 'ville' => $request->ville,
                 'quartier' => $request->quartier,
                 'code_postal' => $request->code_postal,
@@ -79,7 +79,9 @@ class AuthController extends Controller
 
         if ($user->role === 'admin') {
             $redirectUrl = '/dashboard'; // URL que React gère
-        }
+        }elseif($user->role === 'prestataire'){
+             $redirectUrl = '/prestataire';
+        };
 
         return response()->json([
             'token' => $user->createToken('token-name')->plainTextToken,

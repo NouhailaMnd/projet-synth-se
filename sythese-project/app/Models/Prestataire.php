@@ -14,7 +14,7 @@ class Prestataire extends Model
         'user_id',
         'telephone',
         'genre',
-        'pays',
+        'region',
         'ville',
         'quartier',
         'code_postal',

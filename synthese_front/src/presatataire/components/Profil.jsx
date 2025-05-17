@@ -7,7 +7,7 @@ export default function Profil() {
     email: '',
     telephone: '',
     genre: '',
-    pays: '',
+    region: '',
     ville: '',
     quartier: '',
     code_postal: '',
@@ -19,8 +19,49 @@ export default function Profil() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [citiesData, setCitiesData] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [cities, setCities] = useState([]);
 
   const token = localStorage.getItem('authToken');
+
+  // Charger les données des villes et régions
+  useEffect(() => {
+    fetch('/cities_and_regions_combined.json')
+      .then(response => response.json())
+      .then(data => {
+        setCitiesData(data);
+        
+        // Extraire les régions uniques
+        const uniqueRegions = Array.from(
+          new Set(data.map(item => item.region.name))
+        ).map(name => {
+          const region = data.find(item => item.region.name === name).region;
+          return {
+            id: region.id,
+            name: region.name
+          };
+        });
+        
+        setRegions(uniqueRegions);
+      })
+      .catch(error => console.error('Error loading cities data:', error));
+  }, []);
+
+  // Filtrer les villes lorsque la région change
+  useEffect(() => {
+    if (form.region && citiesData.length > 0) {
+      const filteredCities = citiesData
+        .filter(item => item.region.name === form.region)
+        .map(item => ({
+          id: item.id,
+          name: item.name
+        }));
+      setCities(filteredCities);
+    } else {
+      setCities([]);
+    }
+  }, [form.region, citiesData]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -43,7 +84,14 @@ export default function Profil() {
   }, [token]);
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(prev => {
+      // Si on change la région, on réinitialise la ville
+      if (name === 'region') {
+        return { ...prev, [name]: value, ville: '' };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSubmit = e => {
@@ -95,8 +143,8 @@ export default function Profil() {
 
   return (
     <div className="flex-1 p-6 md:p-8 overflow-auto">
-<div className="w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-{/* Header */}
+      <div className="w-full mx-auto bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Header */}
         <div className="px-6 py-5 bg-gradient-to-r from-blue-600 to-blue-800 ">
           <h2 className="text-2xl font-bold text-white">Mon Profil</h2>
           <p className="text-indigo-100">Gérez vos informations personnelles et votre mot de passe</p>
@@ -189,25 +237,38 @@ export default function Profil() {
               <h3 className="text-lg font-medium text-gray-900 mb-4">Adresse</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pays</label>
-                  <input
-                    type="text"
-                    name="pays"
-                    value={form.pays}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Région</label>
+                  <select
+                    name="region"
+                    value={form.region}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                  />
+                  >
+                    <option value="">Sélectionnez une région</option>
+                    {regions.map(region => (
+                      <option key={region.id} value={region.name}>
+                        {region.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
-                  <input
-                    type="text"
+                  <select
                     name="ville"
                     value={form.ville}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                  />
+                    disabled={!form.region}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition disabled:opacity-50"
+                  >
+                    <option value="">Sélectionnez une ville</option>
+                    {cities.map(city => (
+                      <option key={city.id} value={city.name}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>

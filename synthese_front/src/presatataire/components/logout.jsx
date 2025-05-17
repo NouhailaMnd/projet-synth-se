@@ -19,7 +19,11 @@ export const logout = async (navigate) => {
 
     // Supprimer le token du localStorage
     localStorage.removeItem('authToken');
-    
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('last_order');
+
+
 
     // Redirection vers la page de login
     navigate('/login');

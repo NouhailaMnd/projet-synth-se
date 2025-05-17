@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 export default function RegisterPrestataire() {
   const navigate = useNavigate();
   const [prestations, setPrestations] = useState([]);
 
+  // Chargement du JSON des villes + régions
+  const [citiesAndRegions, setCitiesAndRegions] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+
   useEffect(() => {
     async function fetchPrestations() {
       try {
-        const response = await fetch('/api/prestations'); // Adaptez l'URL à votre route Laravel
+        const response = await fetch('/api/prestations'); // adapte l'url à ta route Laravel
         const data = await response.json();
         setPrestations(data);
       } catch (error) {
@@ -16,16 +22,40 @@ export default function RegisterPrestataire() {
     }
 
     fetchPrestations();
+
+    // Charger le JSON des villes et régions
+    fetch('/cities_and_regions_combined.json')
+      .then(res => res.json())
+      .then(data => {
+        setCitiesAndRegions(data);
+
+        // Extraire les régions uniques
+        const uniqueRegionsMap = {};
+        data.forEach(item => {
+          const id = item.region.id;
+          if (!uniqueRegionsMap[id]) {
+            uniqueRegionsMap[id] = item.region.name;
+          }
+        });
+
+        const uniqueRegions = Object.entries(uniqueRegionsMap).map(([id, name]) => ({
+          id,
+          name
+        }));
+
+        setRegions(uniqueRegions);
+      })
+      .catch(err => console.error("Erreur lors du chargement des régions et villes:", err));
   }, []);
 
   const [formData, setFormData] = useState({
-    name: '',  
+    name: '',
     email: '',
     password: '',
     role: 'prestataire',
     telephone: '',
     genre: '',
-    pays: '',
+    region: '',
     ville: '',
     quartier: '',
     code_postal: ''
@@ -36,6 +66,15 @@ export default function RegisterPrestataire() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'region') {
+      // filtrer les villes correspondant à la région sélectionnée
+      const citiesFiltered = citiesAndRegions.filter(city => city.region.name === value);
+      setFilteredCities(citiesFiltered);
+
+      // Réinitialiser la ville si la région change
+      setFormData(prev => ({ ...prev, ville: '' }));
+    }
   };
 
   async function handleRegister(e) {
@@ -62,7 +101,7 @@ export default function RegisterPrestataire() {
       } else {
         const data = await response.json();
         console.log("Inscription réussie :", data);
-        navigate('/login')
+        navigate('/login');
       }
     } catch (error) {
       console.error("Erreur réseau :", error);
@@ -175,78 +214,103 @@ export default function RegisterPrestataire() {
             </div>
           </div>
 
-          <div className="mb-5 pt-3">
-            <label className="mb-5 block text-base font-semibold text-[#07074D] sm:text-xl">
-              Détails de l'adresse
-            </label>
-            <div className="-mx-3 flex flex-wrap">
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-5">
-                  <input
-                    type="text"
-                    name="pays"
-                    value={formData.pays} onChange={handleChange}
-                    id="pays"
-                    placeholder="Pays"
-                    required
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-5">
-                  <input
-                    type="text"
-                    name="ville"
-                    value={formData.ville} onChange={handleChange}
-                    id="ville"
-                    placeholder="Ville"
-                    required
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-5">
-                  <input
-                    type="text"
-                    name="quartier"
-                    value={formData.quartier} onChange={handleChange}
-                    id="quartier"
-                    placeholder="Quartier ou zone"
-                    required
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-              <div className="w-full px-3 sm:w-1/2">
-                <div className="mb-5">
-                  <input
-                    type="text"
-                    name="code_postal"
-                    value={formData.code_postal} onChange={handleChange}
-                    id="code_postal"
-                    placeholder="Code postal"
-                    required
-                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type='submit'
-              className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
-            >
-              S'inscrire
-            </button>
-          </div>
-          </form>
+         <div className="mb-5 pt-3">
+                <label className="mb-5 block text-base font-semibold text-[#07074D] sm:text-xl">
+                  Détails de l'adresse
+                </label>
+                <div className="-mx-3 flex flex-wrap">
+                  <div className="w-full px-3 sm:w-1/2">
+                    <div className="mb-5">
+                      <label htmlFor="region" className="mb-2 block text-base font-medium text-[#07074D]">Région</label>
+                      <select
+                        id="region"
+                        name="region"
+                        value={formData.region}
+                        onChange={handleChange}
+                        required
+                        className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                      >
+                        <option value="">-- Sélectionnez une région --</option>
+                        {regions.map(region => (
+                          <option key={region.id} value={region.name}>
+                            {region.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.region && <p className="text-red-500 text-sm">{errors.region[0]}</p>}
                     </div>
+                  </div>
+
+                  <div className="w-full px-3 sm:w-1/2">
+                    <div className="mb-5">
+                      <label htmlFor="ville" className="mb-2 block text-base font-medium text-[#07074D]">Ville</label>
+                      <select
+                        id="ville"
+                        name="ville"
+                        value={formData.ville}
+                        onChange={handleChange}
+                        required
+                        disabled={!formData.region}
+                        className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                      >
+                        <option value="">-- Sélectionnez une ville --</option>
+                        {filteredCities.map(city => (
+                          <option key={city.id} value={city.name}>
+                            {city.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.ville && <p className="text-red-500 text-sm">{errors.ville[0]}</p>}
+                    </div>
+                  </div>
+
+                  {/* Quartier et Code postal restent inputs */}
+                  <div className="w-full px-3 sm:w-1/2">
+                    <div className="mb-5">
+                      <input
+                        type="text"
+                        name="quartier"
+                        value={formData.quartier}
+                        onChange={handleChange}
+                        id="quartier"
+                        placeholder="Quartier ou zone"
+                        required
+                        className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full px-3 sm:w-1/2">
+                    <div className="mb-5">
+                      <input
+                        type="text"
+                        name="code_postal"
+                        value={formData.code_postal}
+                        onChange={handleChange}
+                        id="code_postal"
+                        placeholder="Code postal"
+                        required
+                        className="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                      />
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+
+              {/* Bouton soumission */}
+              <div>
+                <button
+                  type="submit"
+                  className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
+                >
+                  S'inscrire
+                </button>
+              </div>
+
+            </form>
+          </div>
         </div>
+      </div>
+    </div>
   );
-};
+}
