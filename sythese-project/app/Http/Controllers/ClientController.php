@@ -78,7 +78,7 @@ class ClientController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'numero_telephone' => 'nullable|string|max:255',
-            'pays' => 'nullable|string|max:255',
+            'region' => 'nullable|string|max:255',
             'ville' => 'nullable|string|max:255',
             'quartier' => 'nullable|string|max:255',
             'code_postal' => 'nullable|string|max:255',
@@ -92,7 +92,7 @@ class ClientController extends Controller
         $client = Client::firstOrNew(['user_id' => $user->id]);
         $client->fill([
             'numero_telephone' => $validated['numero_telephone'] ?? null,
-            'pays' => $validated['pays'] ?? null,
+            'region' => $validated['region'] ?? null,
             'ville' => $validated['ville'] ?? null,
             'quartier' => $validated['quartier'] ?? null,
             'code_postal' => $validated['code_postal'] ?? null,

@@ -116,8 +116,8 @@ export default function Invoice() {
   const adresse = [user.quartier, user.ville].filter(Boolean).join(", ");
   if (adresse) doc.text(adresse, 114, cursorY + 22);
 
-  const codePays = [user.code_postal, user.pays].filter(Boolean).join(", ");
-  if (codePays) doc.text(codePays, 114, cursorY + 29);
+  const coderegion = [user.code_postal, user.region].filter(Boolean).join(", ");
+  if (coderegion) doc.text(coderegion, 114, cursorY + 29);
 
   if (user.numero_telephone) doc.text(`Tél : ${user.numero_telephone}`, 114, cursorY + 36);
 
@@ -256,8 +256,8 @@ export default function Invoice() {
             {(user.quartier || user.ville) && (
               <p>{[user.quartier, user.ville].filter(Boolean).join(", ")}</p>
             )}
-            {(user.code_postal || user.pays) && (
-              <p>{[user.code_postal, user.pays].filter(Boolean).join(", ")}</p>
+            {(user.code_postal || user.region) && (
+              <p>{[user.code_postal, user.region].filter(Boolean).join(", ")}</p>
             )}
             {user.numero_telephone && <p>Tél : {user.numero_telephone}</p>}
             <p className="text-blue-500">{user.email || "N/A"}</p>

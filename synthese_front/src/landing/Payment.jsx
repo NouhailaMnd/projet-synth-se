@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import NavBar from "../layouts/NavBar";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function PaymentForm() {
   const [user, setUser] = useState({ id: "", name: "", email: "" });
@@ -15,8 +17,13 @@ export default function PaymentForm() {
     const userData = sessionStorage.getItem("user");
 
     if (!token || !userData) {
-      alert("Vous devez être connecté pour effectuer un paiement.");
-      window.location.href = "/login";
+      toast.info("Vous devez être connecté pour effectuer un paiement.", {
+        position: "top-center",
+        autoClose: 2500,
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2500);
       return;
     }
 
@@ -26,8 +33,13 @@ export default function PaymentForm() {
       setUser(parsedUser);
     } catch (e) {
       console.error("❌ Erreur de parsing user :", e);
-      alert("Erreur lors de la récupération des informations utilisateur.");
-      window.location.href = "/login";
+      toast.error("Erreur lors de la récupération des informations utilisateur.", {
+        position: "top-center",
+        autoClose: 2500,
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2500);
     }
   }, []);
 
@@ -38,12 +50,18 @@ export default function PaymentForm() {
     const token = sessionStorage.getItem("token");
 
     if (!token) {
-      alert("Token manquant. Veuillez vous reconnecter.");
+      toast.error("Token manquant. Veuillez vous reconnecter.", {
+        position: "top-center",
+        autoClose: 2500,
+      });
       return;
     }
 
     if (cart.length === 0) {
-      alert("Le panier est vide.");
+      toast.warn("Le panier est vide.", {
+        position: "top-center",
+        autoClose: 2500,
+      });
       return;
     }
 
@@ -73,16 +91,27 @@ export default function PaymentForm() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("✅ Paiement réussi !");
+        toast.success("✅ Paiement réussi !", {
+          position: "top-center",
+          autoClose: 2500,
+        });
         sessionStorage.setItem("last_order", JSON.stringify(cart));
         sessionStorage.removeItem("cart");
-        window.location.href = "/facture";
+        setTimeout(() => {
+          window.location.href = "/facture";
+        }, 2500);
       } else {
-        alert("Erreur : " + (data.message || "Échec du paiement"));
+        toast.error("Erreur : " + (data.message || "Échec du paiement"), {
+          position: "top-center",
+          autoClose: 2500,
+        });
       }
     } catch (err) {
       console.error("Erreur réseau ou serveur :", err);
-      alert("Erreur de connexion au serveur.");
+      toast.error("Erreur de connexion au serveur.", {
+        position: "top-center",
+        autoClose: 2500,
+      });
     }
   };
 
@@ -164,6 +193,7 @@ export default function PaymentForm() {
           <p className="text-xs text-gray-400 mt-3">Paiement sécurisé</p>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }
