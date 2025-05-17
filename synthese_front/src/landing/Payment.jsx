@@ -139,7 +139,7 @@ export default function PaymentForm() {
             )}
 
             <button type="submit" className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-bold text-lg">
-              Payer {(montant * 1.2).toFixed(2)} €
+              Payer {(montant * 1.2).toFixed(2)} DH
             </button>
           </form>
         </div>
@@ -149,16 +149,16 @@ export default function PaymentForm() {
           <div className="text-sm text-gray-700 space-y-2">
             <div className="flex justify-between">
               <span>Sous-total</span>
-              <span>€ {montant.toFixed(2)}</span>
+              <span>DH {montant.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>TVA (20%)</span>
-              <span>€ {(montant * 0.2).toFixed(2)}</span>
+              <span>DH {(montant * 0.2).toFixed(2)}</span>
             </div>
             <hr />
             <div className="flex justify-between font-bold text-lg">
               <span>Total TTC</span>
-              <span>€ {(montant * 1.2).toFixed(2)}</span>
+              <span>DH {(montant * 1.2).toFixed(2)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-400 mt-3">Paiement sécurisé</p>

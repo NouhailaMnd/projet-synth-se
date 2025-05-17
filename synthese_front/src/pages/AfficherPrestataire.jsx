@@ -158,16 +158,16 @@ const AfficherPrestataires = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6 mt-20 border-b pb-2">
         Liste des Prestataires</h2>
       <button onClick={toggleForm} 
-      className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4">
+      className="bg-blue-600 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mb-4">
         + Ajouter un Prestataire
       </button>
 <button onClick={() => setShowSearchInput(!showSearchInput)}   className="text-indigo-500 absolute right-10">
 
           <span    
-        className="bg-blue-900 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
+        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-800 ml-2"
             >🔍</span>
         </button>    
 
@@ -214,7 +214,7 @@ const AfficherPrestataires = () => {
           </div>
 
           <div className="mt-6 flex space-x-3">
-            <button onClick={handleSubmit} className="bg-indigo-900 text-white px-4 py-2 text-sm rounded-md hover:bg-indigo-800 transition-all">
+            <button onClick={handleSubmit} className="bg-indigo-600 text-white px-4 py-2 text-sm rounded-md hover:bg-indigo-800 transition-all">
               Sauvegarder
             </button>
             <button onClick={() => setShowForm(false)} className="bg-gray-800 text-white px-4 py-2 text-sm rounded-md hover:bg-gray-700 transition-all">
@@ -239,7 +239,7 @@ const AfficherPrestataires = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white border rounded-xl shadow text-sm table-auto">
-          <thead className="bg-blue-900 text-white">
+          <thead className="bg-blue-600 text-white">
             <tr>
               <th className="p-2 text-left text-xs w-20">Photo</th>
               <th className="p-2 text-left text-xs w-28">Nom</th>

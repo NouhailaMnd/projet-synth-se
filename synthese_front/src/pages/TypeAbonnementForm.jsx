@@ -119,7 +119,7 @@ export default function TypeAbonnementForm() {
  
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 mt-20 border-b pb-2">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6 mt-20 border-b pb-2">
         Gestion des abonnements
       </h2>
  
@@ -129,7 +129,7 @@ export default function TypeAbonnementForm() {
             setShowForm((prev) => !prev);
             resetForm();
           }}
-          className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mr-4"
+          className="bg-blue-600 text-white px-4 py-1 text-sm rounded hover:bg-blue-800 mr-4"
         >
           {showForm ? 'Annuler' : '+ Ajouter abonnement'}
         </button>
@@ -181,7 +181,7 @@ export default function TypeAbonnementForm() {
  
           <button
             type="submit"
-            className="bg-blue-900 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
+            className="bg-blue-600 text-white px-4 py-1 text-sm rounded hover:bg-blue-800"
           >
             {editId ? 'Modifier' : 'Ajouter'}
           </button>
@@ -189,7 +189,7 @@ export default function TypeAbonnementForm() {
       )}
  
       <table className="min-w-full text-sm text-left border">
-        <thead className="bg-blue-900 text-white">
+        <thead className="bg-blue-600 text-white">
           <tr>
             <th className="border px-2 py-1">Type</th>
             <th className="border px-2 py-1">Prix</th>
@@ -223,7 +223,7 @@ export default function TypeAbonnementForm() {
       </table>
  
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-md max-w-sm text-center">
             <p className="mb-4">Confirmer la suppression de cet abonnement ?</p>
             <div className="flex justify-center space-x-4">

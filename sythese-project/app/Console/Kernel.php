@@ -24,10 +24,10 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-{
-    $schedule->command('reservations:update-status')->daily();
-    $schedule->command('app:update-abonnement-status')->daily();}
-
+    {
+        $schedule->command('reservations:update-status')->daily();
+        $schedule->command('abonnement:update-status')->daily();
+    }
 
     /**
      * Enregistrer les commandes dans Artisan.

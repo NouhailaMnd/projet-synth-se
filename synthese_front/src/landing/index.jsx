@@ -5,7 +5,9 @@ import NavBar from "../layouts/NavBar";
 
 export default function Index() {
   const [services, setServices] = useState([]);
+  const [filteredServices, setFilteredServices] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,6 +44,27 @@ export default function Index() {
         console.error("Erreur lors du chargement des services :", error);
       });
   }, []);
+
+ const handleSearch = () => {
+  const term = searchTerm.toLowerCase();
+
+  const results = services.filter(service => {
+    const nom = service.nom.toLowerCase();
+    const prestationNom = service.prestation.nom.toLowerCase();
+    const prix = service.prix.toString().toLowerCase();
+    const description = service.description.toLowerCase();
+
+    return (
+      nom.includes(term) ||
+      prestationNom.includes(term) ||
+      prix.includes(term) ||
+      description.includes(term)
+    );
+  });
+
+  setFilteredServices(results);
+};
+
 
   const steps = [
     {
@@ -97,12 +120,12 @@ export default function Index() {
               Des prestataires qualifiés pour le ménage, jardinage, bricolage et plus encore. Réservez en quelques clics !
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
+              <a href="/Services"><button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
                 Découvrir les services
-              </button>
-              <button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
+              </button></a>
+              <a href="/HowItWorks"><button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
                 En savoir plus
-              </button>
+              </button></a>
             </div>
           </div>
 
@@ -111,11 +134,17 @@ export default function Index() {
               Quel service cherchez-vous ?
             </h2>
             <input
-              type="text"
-              placeholder="Ex: ménage, jardinage..."
-              className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <button className="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition">
+  type="text"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  placeholder="Ex: Baby-sitting soir, Aide à la mobilité..."
+  className="w-full p-3 border border-gray-300 rounded-lg mb-4 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+
+            <button
+              onClick={handleSearch}
+              className="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition"
+            >
               Rechercher
             </button>
           </div>
@@ -138,22 +167,21 @@ export default function Index() {
           ))}
         </div>
 
-        {/* Services populaires */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Services populaires</h2>
-          <a href="#" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
+          <a href="/Services" className="text-blue-600 hover:underline text-sm flex items-center gap-1">
             Voir tous les services <span>→</span>
           </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {services.map((service, index) => (
+          {(filteredServices.length > 0 ? filteredServices : services).map((service, index) => (
             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
-               <img
-                      src={service.photo}
-                      alt={service.nom}
+              <img
+                src={service.photo}
+                alt={service.nom}
                 className="w-full h-48 object-cover"
-                    />
+              />
               <div className="p-4">
                 <p className="text-sm text-blue-600 mb-1">{service.prestation.nom}</p>
                 <div className="flex justify-between items-center mb-2">
@@ -164,7 +192,7 @@ export default function Index() {
                 </div>
                 <p className="text-sm text-gray-600 mb-4">{service.description}</p>
                 <div className="flex justify-between items-center">
-                  <span className="font-bold">{service.prix} €/h</span>
+                  <span className="font-bold">{service.prix} DH/h</span>
                   <button
                     onClick={() => navigate(`/ServiceDetail/${service.id}`)}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm"
@@ -178,6 +206,7 @@ export default function Index() {
         </div>
       </div>
 
+      {/* COMMENT ÇA MARCHE */}
       <section className="bg-white py-12 text-center">
         <h2 className="text-2xl font-bold mb-10">Comment ça marche ?</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6 max-w-6xl mx-auto">
@@ -198,6 +227,7 @@ export default function Index() {
         </div>
       </section>
 
+      {/* TÉMOIGNAGES */}
       <section className="bg-white py-16">
         <h2 className="text-2xl font-bold text-center mb-10">Témoignages de nos clients</h2>
         <div className="flex flex-col md:flex-row justify-center gap-6 px-6">
@@ -218,14 +248,16 @@ export default function Index() {
         </div>
       </section>
 
+      {/* CALL TO ACTION */}
       <section className="bg-blue-500 text-white py-14 text-center">
         <h2 className="text-2xl font-bold mb-3">Prêt à simplifier votre quotidien ?</h2>
         <p className="mb-6">Rejoignez notre plateforme et trouvez le prestataire idéal pour tous vos besoins de services à domicile.</p>
-        <button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded hover:bg-gray-100 transition">
+        <a href="/auth/Client"><button className="bg-white text-blue-600 font-semibold px-6 py-3 rounded hover:bg-gray-100 transition">
           S’inscrire comme client
-        </button>
+        </button></a>
       </section>
 
+      {/* FOOTER */}
       <footer className="bg-gray-900 text-white py-10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 px-6 text-sm">
           <div>

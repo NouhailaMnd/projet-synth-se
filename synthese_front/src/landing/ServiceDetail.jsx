@@ -108,7 +108,7 @@ export default function ServiceDetail() {
                   className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Prix horaire : {service.prix} €/h
+                  Prix horaire : {service.prix} DH/h
                 </p>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function ServiceDetail() {
         <div className="bg-white border rounded-lg shadow p-6 h-fit">
           <h3 className="text-sm font-semibold mb-2">Réserver ce service</h3>
           <p className="text-lg font-bold text-blue-600 mb-4">
-            {service.prix} €<span className="text-sm font-normal text-gray-500">/heure</span>
+            {service.prix} DH<span className="text-sm font-normal text-gray-500">/heure</span>
           </p>
 
           {selectedPrestataire && (

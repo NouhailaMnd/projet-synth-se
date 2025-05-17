@@ -104,7 +104,7 @@ export default function ServiceList() {
                 onChange={e => setMaxPrice(Number(e.target.value))}
                 className="w-full"
               />
-              <p className="text-sm mt-1">0 € – {maxPrice} €</p>
+              <p className="text-sm mt-1">0 DH – {maxPrice} DH</p>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -132,7 +132,7 @@ export default function ServiceList() {
                   <p className="text-xs text-blue-600 mb-1">{service.fullCategory}</p>
                   <h3 className="font-semibold text-md mb-2">{service.title}</h3>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold">{service.price} €/h</span>
+                    <span className="text-sm font-semibold">{service.price} DH/h</span>
                     <span className="text-yellow-500 text-sm">⭐ 4.5</span>
                   </div>
                   <button

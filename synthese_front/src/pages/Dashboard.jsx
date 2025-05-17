@@ -28,8 +28,8 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 pb-8 px-6">
-      <h1 className="text-center text-4xl font-semibold text-gray-800 mb-10">Tableau de Bord</h1>
+    <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-purple-100 to-blue-200 pt-24 pb-8 px-6">
+      <h1 className="text-center text-4xl font-semibold text-gray-800 mb-16">Tableau de Bord</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
         {/* Carte Total Clients */}
         <div className="bg-gradient-to-r from-blue-500 to-teal-400 text-white p-6 rounded-lg shadow-xl hover:shadow-2xl transform transition duration-300 ease-in-out hover:scale-105">
@@ -39,7 +39,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Clients</h3>
-              <p className="text-4xl font-bold">{stats.totalClients}</p>
+              <p className="text-3xl font-bold">{stats.totalClients}</p>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Prestataires</h3>
-              <p className="text-4xl font-bold">{stats.totalPrestataires}</p>
+              <p className="text-3xl font-bold">{stats.totalPrestataires}</p>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Prestations</h3>
-              <p className="text-4xl font-bold">{stats.totalPrestations}</p>
+              <p className="text-3xl font-bold">{stats.totalPrestations}</p>
             </div>
           </div>
         </div>
@@ -78,7 +78,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Services</h3>
-              <p className="text-4xl font-bold">{stats.totalServices}</p>
+              <p className="text-3xl font-bold">{stats.totalServices}</p>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Contacts</h3>
-              <p className="text-4xl font-bold">{stats.totalContacts}</p>
+              <p className="text-3xl font-bold">{stats.totalContacts}</p>
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@ const Dashboard = () => {
             </div>
             <div>
               <h3 className="text-xl font-semibold">Total des Réservations</h3>
-              <p className="text-4xl font-bold">{stats.totalReservations}</p>
+              <p className="text-3xl font-bold">{stats.totalReservations}</p>
             </div>
           </div>
         </div>

@@ -216,3 +216,5 @@ Route::get('/prestations/{id}', [PrestaController::class, 'show']);
 Route::delete('/prestations/{id}', [PrestaController::class, 'destroy']);
 Route::resource('prestations', PrestaController::class);
 Route::put('/prestations/{id}', 'PrestaController@update');
+
+Route::middleware('auth:sanctum')->get('/client/profile', [ClientController::class, 'getProfile']);
