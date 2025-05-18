@@ -29,8 +29,7 @@ export default function ServiceList() {
             fullCategory: `${icon} ${name}`,
             price: parseFloat(service.prix),
             image: service.photo
-              ? `http://localhost:8000/storage/${service.photo}`
-              : "https://via.placeholder.com/300x180?text=Service",
+            
           };
         });
 
@@ -127,7 +126,8 @@ export default function ServiceList() {
           <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredServices.map((service, idx) => (
               <div key={idx} className="border rounded-lg overflow-hidden shadow-sm bg-white hover:shadow-md transition">
-                <img src={service.image} alt={service.title} className="w-full h-40 object-cover" />
+                <img src={service.image} 
+                alt={service.title} className="w-full h-40 object-cover" />
                 <div className="p-4">
                   <p className="text-xs text-blue-600 mb-1">{service.fullCategory}</p>
                   <h3 className="font-semibold text-md mb-2">{service.title}</h3>
