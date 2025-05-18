@@ -157,7 +157,13 @@ const Sidebar = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:w-64 bg-[#3b82f6] shadow-lg text-white flex-col justify-between">
         <div className="p-6">
-          <h1 className="text-2xl font-extrabold mb-6 text-center">ÀDomicile</h1>
+  <div className="p-4 border-b border-indigo-600 flex items-center justify-center">
+        <img 
+          src="/logo-removebg-preview.png" 
+          alt="Logo DomiService" 
+          className="h-20 w-auto object-contain" // Ajustez h-16 selon vos besoins
+        />
+        </div>
           <nav className="space-y-2">{renderLinks(links)}</nav>
         </div>
         <div className="p-4 text-center text-xs text-gray-400">&copy; 2025 ÉquiPassion</div>
