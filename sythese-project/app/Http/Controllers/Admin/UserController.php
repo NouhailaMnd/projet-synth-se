@@ -42,8 +42,6 @@ public function update(Request $request)
 
     return response()->json($user);
 }
-
-
     // Méthode pour supprimer un utilisateur
 public function destroy($id)
 {
