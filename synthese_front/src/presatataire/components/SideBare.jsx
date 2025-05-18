@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   FiHome,
@@ -13,28 +13,69 @@ import {
   FiDollarSign,
   FiPieChart
 } from 'react-icons/fi';
-
 import { useNavigate } from 'react-router-dom';
 import { logout } from './logout';
 
 const SideBare = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState({ 
+    name: 'Utilisateur', 
+    email: '',
+    role: 'Basic'
+  });
   const location = useLocation();
 
+  useEffect(() => {
+    // Récupération des données utilisateur
+    const userSession = sessionStorage.getItem('user');
+    if (userSession) {
+      try {
+        const user = JSON.parse(userSession);
+        setUserData({
+          name: user.name || 'Utilisateur',
+          email: user.email || '',
+          role: user.role || 'Basic'
+        });
+      } catch (error) {
+        console.error("Erreur de parsing des données utilisateur:", error);
+      }
+    }
+  }, []);
+
   const toggleSidebar = () => setIsOpen(!isOpen);
-
   const isActive = (path) => location.pathname === path;
-
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout(navigate);
   };
 
+  const getInitials = (name) => {
+    if (!name || name === 'Utilisateur') return 'US';
+    const parts = name.split(' ');
+    let initials = '';
+    if (parts.length > 1) {
+      initials = parts[0][0] + parts[parts.length - 1][0];
+    } else {
+      initials = parts[0].substring(0, 2);
+    }
+    return initials.toUpperCase();
+  };
+
+  const getRoleColor = (role) => {
+    switch(role.toLowerCase()) {
+      case 'premium':
+        return 'text-yellow-300';
+      case 'admin':
+        return 'text-red-400';
+      default:
+        return 'text-indigo-200';
+    }
+  };
+
   return (
     <>
-      {/* Bouton menu mobile */}
+      {/* Mobile menu button */}
       <button
         onClick={toggleSidebar}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all"
@@ -59,22 +100,20 @@ const SideBare = () => {
       `}>
         <div className="flex flex-col h-full">
 
-          {/* Logo / Titre */}
-          <div className="p-6 border-b border-indigo-600 flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-indigo-700 font-bold text-lg">M</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">MonServicePro</h1>
-              <p className="text-indigo-200 text-xs">Tableau de bord</p>
-            </div>
-          </div>
+      {/* Logo Container */}
+      <div className="p-4 border-b border-indigo-600 flex items-center justify-center">
+        <img 
+          src="/logo.png" 
+          alt="Logo DomiService" 
+          className="h-20 w-auto object-contain" // Ajustez h-16 selon vos besoins
+        />
+        </div>
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-track-indigo-700 hover:scrollbar-thumb-indigo-400">
             <ul className="space-y-1 px-4">
 
-              {/* Tableau de bord */}
+              {/* Dashboard */}
               <li>
                 <NavLink
                   to="/prestataire"
@@ -91,7 +130,7 @@ const SideBare = () => {
                 </NavLink>
               </li>
 
-              {/* Prestations */}
+              {/* Services */}
               <li>
                 <NavLink
                   to="/prestataire/list"
@@ -105,7 +144,7 @@ const SideBare = () => {
                 </NavLink>
               </li>
 
-              {/* Réservations */}
+              {/* Reservations */}
               <li>
                 <NavLink
                   to="/prestataire/reservations"
@@ -116,11 +155,10 @@ const SideBare = () => {
                 >
                   <FiMessageSquare className="mr-3 text-lg" />
                   Réservations
-                  
                 </NavLink>
               </li>
 
-              {/* Profil Prestataire */}
+              {/* Profile */}
               <li>
                 <NavLink
                   to="/prestataire/profil"
@@ -134,7 +172,7 @@ const SideBare = () => {
                 </NavLink>
               </li>
 
-              {/* Abonnement */}
+              {/* Subscription */}
               <li>
                 <NavLink
                   to="/prestataire/abonnement"
@@ -148,39 +186,32 @@ const SideBare = () => {
                 </NavLink>
               </li>
 
-              {/* Paramètres */}
-              <li>
-                <NavLink
-                  to="/parametres"
-                  className={({ isActive }) => `
-                    flex items-center px-4 py-3 rounded-lg transition-all
-                    ${isActive ? 'bg-white text-indigo-700 font-medium shadow-md' : 'hover:bg-indigo-600 hover:shadow-md'}
-                  `}
-                >
-                  <FiSettings className="mr-3 text-lg" />
-                  Paramètres
-                </NavLink>
-              </li>
+             
 
             </ul>
           </nav>
 
-          {/* Pied de page avec utilisateur */}
+          {/* User footer */}
           <div className="p-4 border-t border-indigo-600">
-            <div className="flex items-center px-4 py-3 mb-2 text-indigo-200">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center mr-3">
-                <span className="text-xs font-medium">JP</span>
+            <div className="flex items-center px-4 py-3 mb-2">
+              <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center mr-3 flex-shrink-0">
+                <span className="text-sm font-medium">{getInitials(userData.name)}</span>
               </div>
-              <div>
-                <p className="text-sm font-medium">Jean Prestataire</p>
-                <p className="text-xs">Premium</p>
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{userData.name}</p>
+                <p className="text-xs truncate" title={userData.email}>{userData.email}</p>
+                <p className={`text-xs mt-1 ${getRoleColor(userData.role)}`}>
+                  {userData.role}
+                </p>
               </div>
             </div>
-            <button className="
-              flex items-center w-full px-4 py-3 rounded-lg
-              hover:bg-indigo-600 transition-all text-left
+            <button 
+              className="
+                flex items-center w-full px-4 py-3 rounded-lg
+                hover:bg-indigo-600 transition-all text-left
               "
-              onClick={handleLogout}>
+              onClick={handleLogout}
+            >
               <FiLogOut className="mr-3 text-lg" />
               Déconnexion
             </button>
