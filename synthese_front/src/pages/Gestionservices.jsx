@@ -19,7 +19,8 @@ export default function GestionServices() {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [alert, setAlert] = useState(null);
-
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupImage, setPopupImage] = useState(null);
   useEffect(() => {
     axios.get("http://localhost:8000/api/prestations").then((res) => setPrestations(res.data));
     axios.get("http://localhost:8000/api/services").then((res) => setServices(res.data));
@@ -116,7 +117,17 @@ const handleDelete = (id) => {
       service.prix.toString().includes(search)
     );
   });
+  // Fonction pour afficher l'image dans le popup
+  const handleImageClick = (imageUrl) => {
+    setPopupImage(imageUrl);
+    setIsPopupOpen(true);
+  };
 
+  // Fonction pour fermer le popup
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setPopupImage(null);
+  };
   console.log(services);
 
   return (
@@ -250,51 +261,72 @@ const handleDelete = (id) => {
       )}
 
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              <th className="border px-2 py-1 text-left">Nom</th>
-              <th className="border px-2 py-1 text-left">Description</th>
-              <th className="border px-2 py-1 text-left">Prestation</th>
-              <th className="border px-2 py-1 text-left">Prix (€)</th>
-              <th className="border px-2 py-1 text-left">Photo</th>
-              <th className="border px-2 py-1 text-left">Action</th>
+           <table className="min-w-full border border-gray-300 text-sm">
+        <thead className="bg-blue-600 text-white">
+          <tr>
+             <th className=" px-2 py-1 text-left">Photo</th>
+            <th className=" px-2 py-1 text-left">Nom</th>
+            <th className=" px-2 py-1 text-left">Description</th>
+            <th className=" px-2 py-1 text-left">Prestation</th>
+            <th className=" px-2 py-1 text-left">Prix (€)</th>
+            <th className=" px-2 py-1 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredServices.map((service) => (
+            <tr key={service.id}>
+               <td className="border px-2 py-1">
+                {service.photo && (
+                  <img
+                    src={service.photo}
+                    alt={service.nom}
+                    className="h-10 w-10 object-cover rounded-full cursor-pointer"
+                    onClick={() => handleImageClick(service.photo)} // Ajout de la fonction de clic
+                  />
+                )}
+              </td>
+              <td className="border px-2 py-1">{service.nom}</td>
+              <td className="border px-2 py-1">{service.description}</td>
+              <td className="border px-2 py-1">{service.prestation?.nom || "N/A"}</td>
+              <td className="border px-2 py-1">{parseFloat(service.prix).toFixed(2)}</td>
+             
+              <td className="border px-2 py-1 space-x-2">
+                <button
+                  onClick={() => handleEdit(service)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                >
+                  ✏
+                </button>
+                <button
+                  onClick={() => handleDelete(service.id)}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  🗑
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredServices.map((service) => (
-              <tr key={service.id}>
-                <td className="border px-2 py-1">{service.nom}</td>
-                <td className="border px-2 py-1">{service.description}</td>
-                <td className="border px-2 py-1">{service.prestation?.nom || "N/A"}</td>
-                <td className="border px-2 py-1">{parseFloat(service.prix).toFixed(2)}</td>
-                <td className="border px-2 py-1">
-                  {service.photo && (
-                    <img
-                      src={service.photo}
-                      alt={service.nom}
-                      className="h-10 w-10 object-cover rounded"
-                    />
-                  )}
-                </td>
-                <td className="border px-2 py-1 space-x-2">
-                  <button
-                    onClick={() => handleEdit(service)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded"
-                  >
-                    ✏
-                  </button>
-                  <button
-                    onClick={() => handleDelete(service.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded"
-                  >
-                    🗑
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Popup d'image */}
+      {isPopupOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded shadow-lg relative">
+            <button
+              onClick={handleClosePopup}
+              className="absolute top-2 right-2 text-xl font-bold text-red-600"
+            >
+              X
+            </button>
+            <img
+              src={popupImage}
+              alt="Popup"
+              className="max-w-full max-h-[80vh] object-contain"
+            />
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );

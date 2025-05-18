@@ -145,8 +145,9 @@ const Sidebar = () => {
             className="fixed inset-y-0 left-0 z-40 w-64 bg-[#3b82f6] shadow-2xl text-white flex flex-col justify-between"
           >
             <div className="p-6">
-              <h1 className="text-2xl font-extrabold mb-6 text-center">Admin Panel</h1>
-              <nav className="space-y-2">{renderLinks(links)}</nav>
+          <h1 className="text-2xl font-extrabold mb-6 text-center">ÀDomicile</h1>
+
+                <nav className="space-y-2">{renderLinks(links)}</nav>
             </div>
             <div className="p-4 text-center text-xs text-gray-400">&copy; 2025 ÉquiPassion</div>
           </motion.aside>
@@ -156,7 +157,7 @@ const Sidebar = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:w-64 bg-[#3b82f6] shadow-lg text-white flex-col justify-between">
         <div className="p-6">
-          <h1 className="text-2xl font-extrabold mb-6 text-center">Admin Panel</h1>
+          <h1 className="text-2xl font-extrabold mb-6 text-center">ÀDomicile</h1>
           <nav className="space-y-2">{renderLinks(links)}</nav>
         </div>
         <div className="p-4 text-center text-xs text-gray-400">&copy; 2025 ÉquiPassion</div>

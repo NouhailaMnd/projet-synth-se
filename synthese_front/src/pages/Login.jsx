@@ -52,7 +52,7 @@ export default function Login() {
         sessionStorage.removeItem('user_email');
         sessionStorage.removeItem('user_role');
 
-        alert("Connexion réussie !");
+        
 
         // Redirection en fonction du rôle
         if (data.redirect) {

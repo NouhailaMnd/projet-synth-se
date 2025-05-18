@@ -96,14 +96,16 @@ const UserTable = () => {
             </tr>
           </thead>
           <tbody>
-            {users
-              .filter(
-                (user) =>
-                  user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  user.role.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((user) => (
+           {users
+  .filter(
+    (user) =>
+      user.role.toLowerCase() !== "admin" && (
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+  )
+  .map((user) => (
                 <tr key={user.id} className="border-t hover:bg-blue-50 text-xs">
                   <td className="p-2">{user.name}</td>
                   <td className="p-2">{user.email}</td>
