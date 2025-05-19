@@ -9,9 +9,10 @@ const AfficherPrestataire = () => {
   const [filteredCities, setFilteredCities] = useState([]);
   const [regions, setRegions] = useState([]);
   const [showForm, setShowForm] = useState(false);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [popupImage, setPopupImage] = useState(null);
   const [showSearchInput, setShowSearchInput] = useState(false);
+  const [prestations, setPrestations] = useState([]);
   const [formData, setFormData] = useState({
     id: null,
     name: "",
@@ -59,7 +60,8 @@ const AfficherPrestataire = () => {
       )
     );
   }, [searchTerm, prestataires]);
-const handleImageClick = (imageUrl) => {
+  
+  const handleImageClick = (imageUrl) => {
     setPopupImage(imageUrl);
     setIsPopupOpen(true);
   };
@@ -68,10 +70,23 @@ const handleImageClick = (imageUrl) => {
     setIsPopupOpen(false);
     setPopupImage(null);
   };
+  
+  // Modification de la fonction fetchPrestataires pour utiliser l'endpoint existant
   const fetchPrestataires = async () => {
     try {
+      // Utiliser l'endpoint existant car la route prestataires-valides n'existe pas encore
       const res = await axios.get("http://localhost:8000/api/prestataires");
-      setPrestataires(res.data);
+      
+      // Filtrer les prestataires côté client pour ne garder que ceux qui ont au moins une prestation validée
+      const prestatairesValides = res.data.filter(prestataire => 
+        prestataire.prestations && 
+        prestataire.prestations.some(prestation => 
+          prestation.pivot && prestation.pivot.status_validation === "valide"
+        )
+      );
+      
+      setPrestataires(prestatairesValides);
+      setFilteredPrestataires(prestatairesValides);
     } catch (err) {
       console.error("Erreur chargement prestataires :", err);
     }
@@ -119,14 +134,11 @@ const handleImageClick = (imageUrl) => {
     setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
   };
 
-
-
   const validateForm = () => {
     if (
       !formData.name ||
       !formData.email ||
       !formData.telephone 
-     
     ) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return false;
@@ -156,7 +168,7 @@ const handleImageClick = (imageUrl) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      fetchPrestataires();
+      fetchPrestataires(); // Cette fonction va maintenant charger uniquement les prestataires validés
       toggleForm();
     } catch (err) {
       console.error("Erreur enregistrement :", err);
@@ -196,7 +208,7 @@ const handleImageClick = (imageUrl) => {
   return (
     <div className="p-6 max-w-6xl mx-auto text-black">
       <h2 className="text-2xl font-bold text-blue-600 mb-6 mt-20 border-b pb-2">
-        Liste des Prestataires
+        Liste des Prestataires Validés
       </h2>
       <button
         onClick={toggleForm}
@@ -295,8 +307,6 @@ const handleImageClick = (imageUrl) => {
               <label>Photo</label>
               <input type="file" onChange={handlePhotoChange} className="w-full" />
             </div>
-
-           
           </div>
 
           <button type="submit" className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800">
@@ -305,18 +315,17 @@ const handleImageClick = (imageUrl) => {
         </form>
       )}
 
-           <table className="min-w-full border border-gray-300 text-sm">
+      <table className="min-w-full border border-gray-300 text-sm">
         <thead className="bg-blue-600 text-white">
-          <tr className=" text-left">
-            <th className="p-2 ">Photo</th>
-            <th className="p-2 ">Nom</th>
-                        <th className="p-2 ">Genre</th>
-
-            <th className="p-2 ">Email</th>
-            <th className="p-2 ">Téléphone</th>
-            <th className="p-2 ">Ville</th>
-            <th className="p-2 ">Région</th>
-            <th className="p-2 ">Action</th>
+          <tr className="text-left">
+            <th className="p-2">Photo</th>
+            <th className="p-2">Nom</th>
+            <th className="p-2">Genre</th>
+            <th className="p-2">Email</th>
+            <th className="p-2">Téléphone</th>
+            <th className="p-2">Ville</th>
+            <th className="p-2">Région</th>
+            <th className="p-2">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -333,13 +342,11 @@ const handleImageClick = (imageUrl) => {
                 )}
               </td>
               <td className="p-2 border">{p.user?.name}</td>
-                            <td className="p-2 border">{p.genre}</td>
-
+              <td className="p-2 border">{p.genre}</td>
               <td className="p-2 border">{p.user?.email}</td>
               <td className="p-2 border">{p.telephone}</td>
               <td className="p-2 border">{p.ville}</td>
               <td className="p-2 border">{p.region}</td>
-             
               <td className="p-2 border flex gap-2">
                 <button
                   onClick={() => handleEdit(p)}

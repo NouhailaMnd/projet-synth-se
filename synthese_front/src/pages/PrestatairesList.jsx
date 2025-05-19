@@ -65,6 +65,14 @@ const PrestatairesList = () => {
     }
   };
 
+  // Filtrer les prestations pour n'afficher que celles en attente
+  const filteredPrestataires = prestataires.map(prestataire => ({
+    ...prestataire,
+    prestations: prestataire.prestations.filter(prestation => 
+      prestation.pivot.status_validation === 'en_attente' || !prestation.pivot.status_validation
+    )
+  }));
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -83,77 +91,86 @@ const PrestatairesList = () => {
         Liste Confirmation des Prestataires
       </h2>
 
-      {prestataires.map(prestataire => (
-        <div key={prestataire.id} className="mb-12 bg-white shadow-lg rounded-2xl p-6">
-          <div className="flex items-center gap-4 mb-6">
-            {prestataire.photo && (
-              <img src={prestataire.photo} alt="Photo Prestataire" className="w-16 h-16 rounded-full object-cover border" />
-            )}
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800">{prestataire.user?.name || 'Nom utilisateur non disponible'}</h2>
-              <p className="text-gray-500">Téléphone : {prestataire.telephone}</p>
+      {filteredPrestataires.map(prestataire => (
+        // N'affiche que les prestataires ayant au moins une prestation en attente
+        prestataire.prestations.length > 0 && (
+          <div key={prestataire.id} className="mb-12 bg-white shadow-lg rounded-2xl p-6">
+            <div className="flex items-center gap-4 mb-6">
+              {prestataire.photo && (
+                <img src={prestataire.photo} alt="Photo Prestataire" className="w-16 h-16 rounded-full object-cover border" />
+              )}
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">{prestataire.user?.name || 'Nom utilisateur non disponible'}</h2>
+                <p className="text-gray-500">Téléphone : {prestataire.telephone}</p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Prestation</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Document</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Statut</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {prestataire.prestations.length === 0 ? (
+                    <tr>
+                      <td className="px-6 py-4 text-gray-400 italic" colSpan="3">Aucune prestation</td>
+                    </tr>
+                  ) : (
+                    prestataire.prestations.map(prestation => (
+                      <tr key={prestation.id} className={`transition ${getStatusColor(prestation.pivot.status_validation)}`}>
+                        <td className="px-6 py-4 font-medium">{prestation.nom}</td>
+                        <td className="px-6 py-4">
+                          {prestation.pivot.document_justificatif ? (
+                            <a
+                              href={`http://localhost:8000/storage/${prestation.pivot.document_justificatif}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              Voir document
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">Aucun document</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <select
+                            value={prestation.pivot.status_validation || 'en_attente'}
+                            onChange={(e) =>
+                              handleStatusChange(prestataire.id, prestation.id, e.target.value)
+                            }
+                            className={`border text-sm rounded-lg block w-full p-2.5 focus:ring-2 focus:outline-none ${
+                              prestation.pivot.status_validation === 'valide'
+                                ? 'bg-green-100 border-green-300 text-green-800 focus:ring-green-300'
+                                : prestation.pivot.status_validation === 'refuse'
+                                ? 'bg-red-100 border-red-300 text-red-800 focus:ring-red-300'
+                                : 'bg-yellow-100 border-yellow-300 text-yellow-800 focus:ring-yellow-300'
+                            }`}
+                          >
+                            <option value="en_attente">En attente</option>
+                            <option value="valide">Validé</option>
+                            <option value="refuse">Refusé</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-
-          <div className="overflow-x-auto rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Prestation</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Document</th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Statut</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {prestataire.prestations.length === 0 ? (
-                  <tr>
-                    <td className="px-6 py-4 text-gray-400 italic" colSpan="3">Aucune prestation</td>
-                  </tr>
-                ) : (
-                  prestataire.prestations.map(prestation => (
-                    <tr key={prestation.id} className={`transition ${getStatusColor(prestation.pivot.status_validation)}`}>
-                      <td className="px-6 py-4 font-medium">{prestation.nom}</td>
-                      <td className="px-6 py-4">
-                        {prestation.pivot.document_justificatif ? (
-                          <a
-                            href={`http://localhost:8000/storage/${prestation.pivot.document_justificatif}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                          >
-                            Voir document
-                          </a>
-                        ) : (
-                          <span className="text-gray-400">Aucun document</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <select
-                          value={prestation.pivot.status_validation || 'en_attente'}
-                          onChange={(e) =>
-                            handleStatusChange(prestataire.id, prestation.id, e.target.value)
-                          }
-                          className={`border text-sm rounded-lg block w-full p-2.5 focus:ring-2 focus:outline-none ${
-                            prestation.pivot.status_validation === 'valide'
-                              ? 'bg-green-100 border-green-300 text-green-800 focus:ring-green-300'
-                              : prestation.pivot.status_validation === 'refuse'
-                              ? 'bg-red-100 border-red-300 text-red-800 focus:ring-red-300'
-                              : 'bg-yellow-100 border-yellow-300 text-yellow-800 focus:ring-yellow-300'
-                          }`}
-                        >
-                          <option value="en_attente">En attente</option>
-                          <option value="valide">Validé</option>
-                          <option value="refuse">Refusé</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        )
       ))}
+
+      {filteredPrestataires.every(p => p.prestations.length === 0) && (
+        <div className="text-center py-10 text-gray-500">
+          Aucune prestation en attente de validation
+        </div>
+      )}
     </div>
   );
 };

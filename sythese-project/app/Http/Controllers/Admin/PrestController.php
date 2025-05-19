@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\Storage;
 
 class PrestController extends Controller
 {
+    public function getValidatedPrestataires()
+{
+    $prestataires = Prestataire::with([
+        'user',
+        'prestations' => function ($query) {
+            $query->withPivot('document_justificatif', 'status_validation');
+        }
+    ])
+    ->whereHas('prestations', function ($query) {
+        $query->where('status_validation', 'valide');
+    })
+    ->get();
+
+    $prestataires->transform(function ($prestataire) {
+        if ($prestataire->photo) {
+            $prestataire->photo = asset('storage/' . $prestataire->photo);
+        }
+        return $prestataire;
+    });
+
+    return response()->json($prestataires);
+}
     // Récupérer tous les prestataires avec les prestations associées
     public function index()
     {
