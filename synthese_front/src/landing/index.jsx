@@ -175,7 +175,7 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {(filteredServices.length > 0 ? filteredServices : services).map((service, index) => (
+{(filteredServices.length > 0 ? filteredServices.slice(0, 3) : services.slice(0, 3)).map((service, index) => (
             <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
               <img
                 src={service.photo}
