@@ -11,6 +11,8 @@ class PrestationPrestataire extends Model
     protected $fillable = [
         'prestation_id',
         'prestataire_id',
+        'document_justificatif',
+        'status_validation',
     ];
     public function prestation()
     {

@@ -10,26 +10,17 @@ const PrestationsList = () => {
     associer: null,
     supprimer: null
   });
+  const [files, setFiles] = useState({});
 
-  // Intercepteur pour ajouter automatiquement le token
+  // Configuration Axios
   useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-          config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    return () => {
-      axios.interceptors.request.eject(requestInterceptor);
-    };
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
   }, []);
 
-  // Charger les prestations et le prestataire
+  // Charger les données
   useEffect(() => {
     fetchPrestationsAvecPrestataire();
   }, []);
@@ -38,180 +29,188 @@ const PrestationsList = () => {
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:8000/api/prestataire/prestations');
-      const { prestataire, prestations } = response.data;
-      setPrestataire(prestataire);
-      setPrestations(prestations);
-      setLoading(false);
+      setPrestataire(response.data.prestataire);
+      setPrestations(response.data.prestations);
     } catch (error) {
-      setError("Erreur lors de la récupération des prestations.");
+      setError("Erreur lors de la récupération des données");
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
 
+  const handleFileChange = (prestationId, event) => {
+    setFiles({
+      ...files,
+      [prestationId]: event.target.files[0]
+    });
+  };
+
   const handleAssocier = async (prestationId) => {
+    if (!files[prestationId]) {
+      setError("Veuillez sélectionner un document");
+      return;
+    }
+
     try {
       setActionLoading({ ...actionLoading, associer: prestationId });
-      await axios.post('http://localhost:8000/api/prestataire/prestations', {
-        prestation_id: prestationId,
-      });
+
+      const formData = new FormData();
+      formData.append('prestation_id', prestationId);
+      formData.append('document_justificatif', files[prestationId]);
+
+      const response = await axios.post(
+        'http://localhost:8000/api/prestataire/prestations',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      // Rafraîchir les données
       await fetchPrestationsAvecPrestataire();
+      
+      // Réinitialiser le fichier pour cette prestation
+      setFiles(prev => {
+        const newFiles = {...prev};
+        delete newFiles[prestationId];
+        return newFiles;
+      });
+
     } catch (error) {
-      console.error("Erreur lors de l'association :", error);
-      setError("Erreur lors de l'association.");
+      console.error("Erreur:", error.response?.data || error.message);
+      setError(error.response?.data?.message || "Erreur lors de l'association");
     } finally {
       setActionLoading({ ...actionLoading, associer: null });
     }
   };
 
-  const handleSupprimerAssociation = async (prestataireId, prestationId) => {
+  const handleSupprimerAssociation = async (prestationId) => {
     try {
       setActionLoading({ ...actionLoading, supprimer: prestationId });
-      await axios.delete(`http://localhost:8000/api/prestataire/${prestataireId}/prestation/${prestationId}`);
+      await axios.delete(
+        `http://localhost:8000/api/prestataire/${prestataire.id}/prestation/${prestationId}`
+      );
       await fetchPrestationsAvecPrestataire();
     } catch (error) {
-      console.error("Erreur lors de la suppression de l'association :", error);
-      setError("Erreur lors de la suppression de l'association.");
+      console.error("Erreur:", error);
+      setError("Erreur lors de la suppression");
     } finally {
       setActionLoading({ ...actionLoading, supprimer: null });
     }
   };
 
-  if (error) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-6 rounded-lg shadow-md max-w-md w-full text-center">
-          <div className="text-red-500 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Erreur</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={() => setError(null)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
-          >
-            Réessayer
-          </button>
-        </div>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
 
-  if (loading || !prestataire) {
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
-          <p className="mt-4 text-gray-700">Chargement des données...</p>
-        </div>
+      <div className="p-4 bg-red-100 text-red-700 rounded mb-4">
+        {error}
+        <button 
+          onClick={() => setError(null)}
+          className="ml-4 px-3 py-1 bg-red-600 text-white rounded"
+        >
+          Fermer
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-        <div className="w-full mx-auto">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-          <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-800  text-white">
-            <h1 className="text-2xl md:text-3xl font-bold">Gestion des Prestations</h1>
-           
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Prestation
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Statut
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {prestations.length === 0 ? (
-                  <tr>
-                    <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
-                      Aucune prestation disponible
-                    </td>
-                  </tr>
-                ) : (
-                  prestations.map((prestation) => (
-                    <tr key={prestation.id} className="hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{prestation.nom}</div>
-                           
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {prestation.est_associee ? (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            Associée
-                          </span>
-                        ) : (
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                            Non associée
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {!prestation.est_associee ? (
-                          <button
-                            onClick={() => handleAssocier(prestation.id)}
-                            disabled={actionLoading.associer === prestation.id}
-                            className={`inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white ${actionLoading.associer === prestation.id ? 'bg-indigo-400' : 'bg-indigo-600 hover:bg-indigo-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition`}
-                          >
-                            {actionLoading.associer === prestation.id ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Traitement...
-                              </>
-                            ) : 'Associer'}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleSupprimerAssociation(prestataire.id, prestation.id)}
-                            disabled={actionLoading.supprimer === prestation.id}
-                            className={`inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white ${actionLoading.supprimer === prestation.id ? 'bg-red-400' : 'bg-red-600 hover:bg-red-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition`}
-                          >
-                            {actionLoading.supprimer === prestation.id ? (
-                              <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Traitement...
-                              </>
-                            ) : 'Supprimer'}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Gestion des Prestations</h1>
+      
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left">Prestation</th>
+              <th className="px-6 py-3 text-left">Statut</th>
+              <th className="px-6 py-3 text-left">Document</th>
+              <th className="px-6 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {prestations.map(prestation => (
+              <tr key={prestation.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="text-sm font-medium text-gray-900">
+                      {prestation.nom}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                    ${prestation.est_associee ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {prestation.est_associee ? 'Associée' : 'Non associée'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {!prestation.est_associee ? (
+                    <input
+                      type="file"
+                      onChange={(e) => handleFileChange(prestation.id, e)}
+                      className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-md file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    />
+                  ) : (
+                    prestation.document_justificatif ? (
+                      <a 
+                        href={`http://localhost:8000/storage/${prestation.document_justificatif}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Voir document
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">Aucun document</span>
+                    )
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  {!prestation.est_associee ? (
+                    <button
+                      onClick={() => handleAssocier(prestation.id)}
+                      disabled={!files[prestation.id] || actionLoading.associer === prestation.id}
+                      className={`px-3 py-1 rounded text-white 
+                        ${!files[prestation.id] || actionLoading.associer === prestation.id
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700'}`}
+                    >
+                      {actionLoading.associer === prestation.id ? 'En cours...' : 'Associer'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleSupprimerAssociation(prestation.id)}
+                      disabled={actionLoading.supprimer === prestation.id}
+                      className={`px-3 py-1 rounded text-white 
+                        ${actionLoading.supprimer === prestation.id
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-red-600 hover:bg-red-700'}`}
+                    >
+                      {actionLoading.supprimer === prestation.id ? 'En cours...' : 'Supprimer'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

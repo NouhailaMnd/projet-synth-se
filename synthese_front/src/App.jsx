@@ -15,6 +15,7 @@ import Checkout from "./landing/Checkout";
 import Payment from './landing/Payment';
 import Invoice from './landing/Invoice';
 import ClientDashboard from './landing/ClientDashboard';
+import PrestatairesList from './pages/PrestatairesList';
 
 
 import Profil from './presatataire/components/Profil';
@@ -152,6 +153,14 @@ function App() {
           element={
             <Layout>
               <Gestionservices />
+            </Layout>
+          }
+        />
+         <Route
+          path="/PrestatairesList"
+          element={
+            <Layout>
+              <PrestatairesList />
             </Layout>
           }
         />

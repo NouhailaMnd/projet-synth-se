@@ -13,7 +13,7 @@ use App\Models\Abonnement;
 
 class ProfileController extends Controller
 {
-    public function afficherPrestationsAvecAssociation()
+public function afficherPrestationsAvecAssociation()
 {
     // Récupérer le prestataire de l'utilisateur authentifié
     $prestataire = auth()->user()->prestataire;
@@ -26,12 +26,19 @@ class ProfileController extends Controller
     // Récupérer toutes les prestations
     $prestations = Prestation::all();
     
-    // Récupérer les prestations associées au prestataire
-    $prestationsAssociees = $prestataire->prestations->pluck('id')->toArray();
+    // Récupérer les prestations associées au prestataire avec les données de la table pivot
+    $prestationsAssociees = $prestataire->prestations()
+        ->withPivot('document_justificatif')
+        ->get()
+        ->keyBy('id');
     
-    // Associer le statut 'est_associee' à chaque prestation
+    // Associer le statut 'est_associee' et le document à chaque prestation
     $prestations = $prestations->map(function ($prestation) use ($prestationsAssociees) {
-        $prestation->est_associee = in_array($prestation->id, $prestationsAssociees);
+        $prestationAssociee = $prestationsAssociees->get($prestation->id);
+        
+        $prestation->est_associee = $prestationAssociee ? true : false;
+        $prestation->document_justificatif = $prestationAssociee ? $prestationAssociee->pivot->document_justificatif : null;
+        
         return $prestation;
     });
     
@@ -43,38 +50,52 @@ class ProfileController extends Controller
 }
     
 
-    public function ajouterPrestation(Request $request)
-    {
-        // Récupérer l'utilisateur authentifié
-        $user = auth()->user();
-        
-        // Vérifier si l'utilisateur a un prestataire associé
-        $prestataire = $user->prestataire;
+public function ajouterPrestation(Request $request)
+{
+    // Récupérer l'utilisateur authentifié
+    $user = auth()->user();
+    
+    // Vérifier si l'utilisateur a un prestataire associé
+    $prestataire = $user->prestataire;
 
-        if (!$prestataire) {
-            return response()->json(['error' => 'Aucun prestataire associé à cet utilisateur.'], 400);
-        }
-
-        // Valider l'ID de la prestation
-        $request->validate([
-            'prestation_id' => 'required|exists:prestations,id',
-        ]);
-
-        $prestationId = $request->prestation_id;
-
-        // Vérifier si la prestation est déjà associée au prestataire
-        if ($prestataire->prestations()->where('prestation_id', $prestationId)->exists()) {
-            return response()->json(['message' => 'Cette prestation est déjà associée à ce prestataire.']);
-        }
-
-        // Ajouter la prestation au prestataire
-        $prestataire->prestations()->attach($prestationId);
-
-        // Mettre à jour la colonne 'disponible' à 1 pour la prestation
-        Prestation::where('id', $prestationId)->update(['disponible' => 1]);
-
-        return response()->json(['message' => 'Prestation ajoutée avec succès !']);
+    if (!$prestataire) {
+        return response()->json(['error' => 'Aucun prestataire associé à cet utilisateur.'], 400);
     }
+
+    // Valider la requête
+    $request->validate([
+        'prestation_id' => 'required|exists:prestations,id',
+        'document_justificatif' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048',
+    ]);
+
+    $prestationId = $request->prestation_id;
+
+    // Vérifier si la prestation est déjà associée au prestataire
+    if ($prestataire->prestations()->where('prestation_id', $prestationId)->exists()) {
+        return response()->json(['message' => 'Cette prestation est déjà associée à ce prestataire.'], 400);
+    }
+
+    // Enregistrer le document
+    $documentPath = $request->file('document_justificatif')->store('documents_justificatifs', 'public');
+
+    // Ajouter la prestation au prestataire avec le document
+    $prestataire->prestations()->attach($prestationId, [
+        'document_justificatif' => $documentPath,
+    ]);
+
+    // Mettre à jour la disponibilité
+    DB::table('prestations')
+    ->join('prestation_prestataire', 'prestations.id', '=', 'prestation_prestataire.prestation_id')
+    ->where('prestation_prestataire.status_validation', 'valide')
+    ->where('prestations.id', $prestationId)
+    ->update(['prestations.disponible' => 1]);
+
+    return response()->json([
+        'message' => 'Prestation ajoutée avec succès !',
+        'document_path' => $documentPath
+    ]);
+}
+
 
     public function supprimerAssociation($prestataireId, $prestationId)
     {

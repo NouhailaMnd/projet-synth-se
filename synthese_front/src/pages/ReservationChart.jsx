@@ -34,10 +34,9 @@ const ReservationChart = () => {
   }
 
   const labels = Object.keys(stats);
-  const statuses = ['enattente', 'confirme', 'encoure', 'termine'];
+  const statuses = ['enattente', 'encoure', 'termine'];
   const colors = {
     enattente: 'orange',
-    confirme: 'blue',
     encoure: 'green',
     termine: 'red'
   };
