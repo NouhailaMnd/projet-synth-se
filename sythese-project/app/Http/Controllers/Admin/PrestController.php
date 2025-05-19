@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Prestation;
+use App\Models\PrestationPrestataire;
+
 use App\Models\Prestataire;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,24 +13,60 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
+
 class PrestController extends Controller
 {
     // Récupérer tous les prestataires avec les prestations associées
-    public function index()
+public function index()
+{
+    $prestataires = Prestataire::with([
+        'user', // charge la relation user
+        'prestations' => function ($query) {
+            $query->withPivot('document_justificatif', 'status_validation');
+        }
+    ])->get();
+
+    // Modifier le chemin de la photo si besoin
+    $prestataires->transform(function ($prestataire) {
+        if ($prestataire->photo) {
+            $prestataire->photo = asset('storage/' . $prestataire->photo);
+        }
+        return $prestataire;
+    });
+
+    return response()->json($prestataires);
+}
+
+
+
+    public function updateStatus(Request $request, $prestataireId, $prestationId)
     {
-        $prestataires = Prestataire::with('user', 'prestations')->get();
-        
-        // Modifier le chemin de la photo pour qu'il soit complet
-        $prestataires->transform(function ($prestataire) {
-            if ($prestataire->photo) {
-                // Assurez-vous que le chemin relatif de la photo est ajouté à 'storage/'
-                $prestataire->photo = asset('storage/' . $prestataire->photo);
-            }
-            return $prestataire;
-        });
-        
-        return response()->json($prestataires);
+        // Valider le statut envoyé
+        $request->validate([
+            'status_validation' => 'required|in:en_attente,valide,refuse',
+        ]);
+
+        // Récupérer le prestataire
+        $prestataire = Prestataire::findOrFail($prestataireId);
+
+        // Mettre à jour la table pivot 'prestation_prestataire'
+        $updated = $prestataire->prestations()->updateExistingPivot($prestationId, [
+            'status_validation' => $request->input('status_validation'),
+        ]);
+
+        if ($updated) {
+            return response()->json([
+                'message' => 'Status mis à jour avec succès.',
+                'status_validation' => $request->input('status_validation'),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Erreur lors de la mise à jour du status.'
+        ], 500);
     }
+
+
 
     // Ajouter un nouveau prestataire
     public function store(Request $request)

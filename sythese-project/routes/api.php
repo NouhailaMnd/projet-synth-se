@@ -207,6 +207,8 @@ Route::delete('prestataires/{id}', [PrestController::class, 'destroy']);  // Sup
 Route::get('/prestations', function () {
     return \App\Models\Prestation::select('id', 'nom', 'disponible')->get();
 });
+Route::put('/prestataires/{prestataire}/prestations/{prestation}/status', [PrestController::class, 'updateStatus']);
+
 
 Route::resource('prestataires', PrestController::class);
 
