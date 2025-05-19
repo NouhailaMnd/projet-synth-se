@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\UpdateReservationStatus::class,
         \App\Console\Commands\UpdateAbonnementStatus::class,
+        \App\Console\Commands\NotifierExpirationAbonnement::class, // ajoute ici ta commande de notification
     ];
 
     /**
@@ -27,6 +28,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('reservations:update-status')->daily();
         $schedule->command('abonnement:update-status')->daily();
+        $schedule->command('abonnement:check-expiration')->daily(); // ligne importante ajoutée
     }
 
     /**
@@ -34,10 +36,5 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
-
-        require base_path('routes/console.php');
-    }
+  
 }

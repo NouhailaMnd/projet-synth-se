@@ -52,6 +52,12 @@ const links = [
       <path d="M3 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2zm0 4h18a1 1 0 010 2H3a1 1 0 010-2z" />
     </svg>
   )},
+  { to: '/PrestatairesList', label: 'Confirmation prestataires', icon: (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+    </svg>
+  )},
   {
   to: '/TypeAbonnementForm',
   label: 'Gestion des Abonnements',

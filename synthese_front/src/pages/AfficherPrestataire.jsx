@@ -23,10 +23,8 @@ const AfficherPrestataire = () => {
     ville: "",
     quartier: "",
     code_postal: "",
-    prestations: [],
     photo: null,
   });
-  const [prestations, setPrestations] = useState([]);
 
   useEffect(() => {
     fetchPrestataires();
@@ -55,7 +53,6 @@ const AfficherPrestataire = () => {
         p.user?.email?.toLowerCase().includes(term) ||
         p.telephone?.toLowerCase().includes(term) ||
         p.genre?.toLowerCase().includes(term) ||
-        p.prestations?.some((pr) => pr.nom.toLowerCase().includes(term)) ||
         p.ville?.toLowerCase().includes(term) ||
         p.quartier?.toLowerCase().includes(term) ||
         p.code_postal?.toLowerCase().includes(term)
@@ -92,7 +89,6 @@ const handleImageClick = (imageUrl) => {
       ville: "",
       quartier: "",
       code_postal: "",
-      prestations: [],
       photo: null,
     });
     setFilteredCities([]);
@@ -123,22 +119,14 @@ const handleImageClick = (imageUrl) => {
     setFormData((prev) => ({ ...prev, photo: e.target.files[0] }));
   };
 
-  const handleCheckboxChange = (e) => {
-    const value = e.target.value;
-    setFormData((prev) => {
-      const updated = prev.prestations.includes(value)
-        ? prev.prestations.filter((id) => id !== value)
-        : [...prev.prestations, value];
-      return { ...prev, prestations: updated };
-    });
-  };
+
 
   const validateForm = () => {
     if (
       !formData.name ||
       !formData.email ||
-      !formData.telephone ||
-      formData.prestations.length === 0
+      !formData.telephone 
+     
     ) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return false;
@@ -196,7 +184,6 @@ const handleImageClick = (imageUrl) => {
       ville: p.ville,
       quartier: p.quartier,
       code_postal: p.code_postal,
-      prestations: p.prestations?.map((pr) => pr.id.toString()) || [],
       photo: null,
     });
     const filtered = citiesAndRegions.filter(
@@ -309,23 +296,7 @@ const handleImageClick = (imageUrl) => {
               <input type="file" onChange={handlePhotoChange} className="w-full" />
             </div>
 
-            <div className="col-span-2">
-              <label>Prestations</label>
-              <div className="flex flex-wrap gap-3">
-                {prestations.map((p) => (
-                  <label key={p.id} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      value={p.id}
-                      checked={formData.prestations.includes(p.id.toString())}
-                      onChange={handleCheckboxChange}
-                      className="mr-2"
-                    />
-                    {p.nom}
-                  </label>
-                ))}
-              </div>
-            </div>
+           
           </div>
 
           <button type="submit" className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-800">
@@ -339,11 +310,12 @@ const handleImageClick = (imageUrl) => {
           <tr className=" text-left">
             <th className="p-2 ">Photo</th>
             <th className="p-2 ">Nom</th>
+                        <th className="p-2 ">Genre</th>
+
             <th className="p-2 ">Email</th>
             <th className="p-2 ">Téléphone</th>
             <th className="p-2 ">Ville</th>
             <th className="p-2 ">Région</th>
-            <th className="p-2 ">Prestations</th>
             <th className="p-2 ">Action</th>
           </tr>
         </thead>
@@ -361,13 +333,13 @@ const handleImageClick = (imageUrl) => {
                 )}
               </td>
               <td className="p-2 border">{p.user?.name}</td>
+                            <td className="p-2 border">{p.genre}</td>
+
               <td className="p-2 border">{p.user?.email}</td>
               <td className="p-2 border">{p.telephone}</td>
               <td className="p-2 border">{p.ville}</td>
               <td className="p-2 border">{p.region}</td>
-              <td className="p-2 border">
-                {p.prestations?.map((pr) => pr.nom).join(", ")}
-              </td>
+             
               <td className="p-2 border flex gap-2">
                 <button
                   onClick={() => handleEdit(p)}
