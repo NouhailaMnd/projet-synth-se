@@ -26,15 +26,19 @@ class PrestationController extends Controller
         return response()->json($prestations);
     }
 
-    public function parPrestation($prestation_id): JsonResponse
+   public function parPrestation($prestation_id): JsonResponse
 {
     $prestation = Prestation::findOrFail($prestation_id);
 
-    // Charger la relation user sur chaque prestataire
-    $prestataires = $prestation->prestataires()->with('user')->get();
+    // Charger uniquement les prestataires avec status_validation = 'valide'
+    $prestataires = $prestation->prestataires()
+        ->with('user')
+        ->wherePivot('status_validation', 'valide') // 👈 ajoute ce filtre sur la table pivot
+        ->get();
 
     return response()->json($prestataires);
 }
+
     
 
 }
