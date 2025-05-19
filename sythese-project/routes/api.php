@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\PrestationController;
-
+use App\Models\Paiement;
 
 
 
@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\ServController;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Contact;
 use App\Http\Controllers\Admin\ContaController;
+use App\Http\Controllers\ReservationController;
 
 use App\Http\Controllers\Admin\TyAbonnementController;
 Route::prefix('type-abonnements')->group(function () {
@@ -218,3 +219,25 @@ Route::resource('prestations', PrestaController::class);
 Route::put('/prestations/{id}', 'PrestaController@update');
 
 Route::middleware('auth:sanctum')->get('/client/profile', [ClientController::class, 'getProfile']);
+
+Route::get('/disponibilite', [ReservationController::class, 'verifierDisponibilite']);
+
+Route::middleware('auth:sanctum')->get('/client/last-payment', function (Request $request) {
+    $clientId = $request->user()->client->id ?? null;
+
+    if (!$clientId) {
+        return response()->json(['message' => 'Client non trouvé'], 404);
+    }
+
+$reservationIds = Reservation::where('user_id', $clientId)->pluck('id');
+
+    $paiement = Paiement::whereIn('reservation_id', $reservationIds)
+        ->orderByDesc('created_at')
+        ->first();
+
+    if (!$paiement) {
+        return response()->json(null, 204);
+    }
+
+    return response()->json($paiement);
+});

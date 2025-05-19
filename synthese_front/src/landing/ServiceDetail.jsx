@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Footer from "./footer";
 import axios from "axios";
 import NavBar from "../layouts/NavBar";
+import { toast } from 'react-toastify';
 
 export default function ServiceDetail() {
   const { id } = useParams();
@@ -26,9 +27,38 @@ export default function ServiceDetail() {
       .catch(err => console.error("Erreur chargement service:", err));
   }, [id]);
 
-  const handleAddToCart = () => {
-    const duree = parseFloat(selectedDuration);
-    const prix = parseFloat(service.prix);
+const handleAddToCart = async () => {
+  const duree = parseFloat(selectedDuration);
+  const prix = parseFloat(service.prix);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  const existingCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+  const existsInCart = existingCart.some(item =>
+    item.id === service.id &&
+    item.prestataire_id === selectedPrestataire &&
+    item.date === selectedDate
+  );
+
+  if (existsInCart) {
+    toast.warn("⚠️ Ce service avec ce prestataire est déjà dans votre panier pour cette date.");
+    return;
+  }
+
+  try {
+    const { data } = await axios.get("http://localhost:8000/api/disponibilite", {
+      params: {
+        service_id: service.id,
+        prestataire_id: selectedPrestataire,
+        date: selectedDate,
+        user_id: user?.id || null,
+      }
+    });
+
+    if (!data.disponible) {
+      toast.error("❌ Ce prestataire est déjà réservé pour cette date.");
+      return;
+    }
+
     const prestataireInfo = prestataires.find(p => p.id === selectedPrestataire);
 
     const newItem = {
@@ -42,12 +72,18 @@ export default function ServiceDetail() {
       prestataire_nom: prestataireInfo?.user?.name || "Inconnu",
     };
 
-    const existingCart = JSON.parse(sessionStorage.getItem("cart")) || [];
     existingCart.push(newItem);
     sessionStorage.setItem("cart", JSON.stringify(existingCart));
-
     window.dispatchEvent(new Event("cartUpdated"));
-  };
+
+    // toast.success("✅ Service ajouté au panier !");
+  } catch (err) {
+    console.error("Erreur lors de la vérification de disponibilité", err);
+    toast.error("❌ Une erreur est survenue. Réessayez plus tard.");
+  }
+};
+
+
 
   if (!service) return <div className="p-10 text-center">Chargement du service...</div>;
 
@@ -171,13 +207,15 @@ export default function ServiceDetail() {
           <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
             📅 Choisissez une date
           </label>
-          <input
-            type="date"
-            id="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none mb-6"
-          />
+         <input
+  type="date"
+  id="date"
+  value={selectedDate}
+  min={new Date().toISOString().split("T")[0]} // 👉 définit la date min à aujourd'hui
+  onChange={(e) => setSelectedDate(e.target.value)}
+  className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none mb-6"
+/>
+
 
           <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
             ⏰ Durée souhaitée (heures)

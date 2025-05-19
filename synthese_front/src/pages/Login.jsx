@@ -54,12 +54,18 @@ export default function Login() {
 
         
 
-        // Redirection en fonction du rôle
-        if (data.redirect) {
-          navigate(data.redirect); // Ex: '/dashboard' pour admin
-        } else {
-          navigate('/'); // Page d'accueil
-        }
+       // Redirection après connexion
+const redirectUrl = sessionStorage.getItem("redirectAfterLogin");
+
+if (redirectUrl) {
+  sessionStorage.removeItem("redirectAfterLogin");
+  navigate(redirectUrl); // Redirige vers la page d'origine (ex : /payment)
+} else if (data.redirect) {
+  navigate(data.redirect); // Pour admin
+} else {
+  navigate("/"); // Sinon, page d'accueil
+}
+
       }
     } catch (error) {
       console.error("Erreur réseau :", error);

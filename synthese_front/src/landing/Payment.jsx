@@ -16,16 +16,17 @@ export default function PaymentForm() {
     const token = sessionStorage.getItem("token");
     const userData = sessionStorage.getItem("user");
 
-    if (!token || !userData) {
-      toast.info("Vous devez être connecté pour effectuer un paiement.", {
-        position: "top-center",
-        autoClose: 2500,
-      });
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 2500);
-      return;
-    }
+  if (!token || !userData) {
+  sessionStorage.setItem("redirectAfterLogin", window.location.pathname); // Enregistre la page actuelle
+  toast.info("Vous devez être connecté pour effectuer un paiement.", {
+    position: "top-center",
+    autoClose: 2500,
+  });
+  setTimeout(() => {
+    window.location.href = "/login";
+  }, 2500);
+  return;
+}
 
     try {
       const parsedUser = JSON.parse(userData);

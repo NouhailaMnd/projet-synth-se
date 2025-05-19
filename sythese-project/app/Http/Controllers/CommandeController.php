@@ -67,7 +67,10 @@ class CommandeController extends Controller
             $paiement->montant = $montantTotal;
             $paiement->methode_paiment = $request->input('methode_paiment', 'carte');
             $paiement->date_paiement = Carbon::now()->format('Y-m-d');
-            $paiement->status = 'payé';
+            $methode = $request->input('methode_paiment', 'carte');
+            $paiement->status = in_array(strtolower($methode), ['carte', 'paypal']) ? 'payé' : 'enattente';
+            $paiement->methode_paiment = $methode;
+
             $paiement->save();
 
             DB::commit();
