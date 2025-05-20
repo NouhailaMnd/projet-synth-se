@@ -13,6 +13,7 @@ use App\Models\Abonnement;
 
 class ProfileController extends Controller
 {
+
 public function afficherPrestationsAvecAssociation()
 {
     // Récupérer le prestataire de l'utilisateur authentifié
@@ -26,28 +27,30 @@ public function afficherPrestationsAvecAssociation()
     // Récupérer toutes les prestations
     $prestations = Prestation::all();
     
-    // Récupérer les prestations associées au prestataire avec les données de la table pivot
+    // Récupérer les prestations associées avec les champs de la table pivot
     $prestationsAssociees = $prestataire->prestations()
-        ->withPivot('document_justificatif')
+        ->withPivot(['document_justificatif', 'status_validation'])
         ->get()
         ->keyBy('id');
     
-    // Associer le statut 'est_associee' et le document à chaque prestation
+    // Ajouter les infos d'association à chaque prestation
     $prestations = $prestations->map(function ($prestation) use ($prestationsAssociees) {
         $prestationAssociee = $prestationsAssociees->get($prestation->id);
-        
+
         $prestation->est_associee = $prestationAssociee ? true : false;
         $prestation->document_justificatif = $prestationAssociee ? $prestationAssociee->pivot->document_justificatif : null;
-        
+        $prestation->status_validation = $prestationAssociee ? $prestationAssociee->pivot->status_validation : null;
+
         return $prestation;
     });
-    
-    // Retourner le prestataire avec ses prestations associées
+
+    // Maintenir la même structure que précédemment pour ne pas casser le frontend
     return response()->json([
         'prestataire' => $prestataire,
         'prestations' => $prestations
     ]);
 }
+
     
 
 public function ajouterPrestation(Request $request)

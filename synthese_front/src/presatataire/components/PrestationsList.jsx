@@ -29,8 +29,24 @@ const PrestationsList = () => {
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:8000/api/prestataire/prestations');
-      setPrestataire(response.data.prestataire);
-      setPrestations(response.data.prestations);
+      
+      // Vérifier la structure de la réponse et l'adapter si nécessaire
+      if (Array.isArray(response.data)) {
+        // Si la réponse est directement un tableau de prestations
+        setPrestations(response.data);
+        
+        // Récupérer le prestataire si nécessaire via une autre requête
+        try {
+          const prestataireResponse = await axios.get('http://localhost:8000/api/prestataire/profil');
+          setPrestataire(prestataireResponse.data);
+        } catch (e) {
+          console.error("Impossible de récupérer le profil du prestataire", e);
+        }
+      } else {
+        // Si la réponse contient toujours l'ancienne structure
+        setPrestataire(response.data.prestataire);
+        setPrestations(response.data.prestations);
+      }
     } catch (error) {
       setError("Erreur lors de la récupération des données");
       console.error(error);
@@ -88,6 +104,11 @@ const PrestationsList = () => {
   };
 
   const handleSupprimerAssociation = async (prestationId) => {
+    if (!prestataire) {
+      setError("Information du prestataire non disponible");
+      return;
+    }
+    
     try {
       setActionLoading({ ...actionLoading, supprimer: prestationId });
       await axios.delete(
@@ -99,6 +120,22 @@ const PrestationsList = () => {
       setError("Erreur lors de la suppression");
     } finally {
       setActionLoading({ ...actionLoading, supprimer: null });
+    }
+  };
+
+  // Fonction pour afficher le statut avec couleur appropriée
+  const getStatusClass = (status) => {
+    if (!status) return 'bg-gray-100 text-gray-800'; // Pas de statut
+    
+    switch(status) {
+      case 'valide':
+        return 'bg-green-100 text-green-800';
+      case 'rejete':
+        return 'bg-red-100 text-red-800';
+      case 'en_attente':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -126,7 +163,16 @@ const PrestationsList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Gestion des Prestations</h1>
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 border border-gray-100">
+          <div className="p-8 bg-gradient-to-r from-blue-600 to-blue-800  text-white">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div>
+                 <h1 className="text-2xl font-bold mb-6">Gestion des Prestations</h1>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
@@ -149,10 +195,18 @@ const PrestationsList = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                    ${prestation.est_associee ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {prestation.est_associee ? 'Associée' : 'Non associée'}
-                  </span>
+                  {prestation.est_associee ? (
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusClass(prestation.status_validation)}`}>
+                      {prestation.status_validation === 'valide' && 'Validée'}
+                      {prestation.status_validation === 'rejete' && 'Rejetée'}
+                      {prestation.status_validation === 'en_attente' && 'En attente'}
+                      {!prestation.status_validation && 'Non défini'}
+                    </span>
+                  ) : (
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                      Non associée
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {!prestation.est_associee ? (
