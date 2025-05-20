@@ -84,9 +84,11 @@ class AbonnementController extends Controller
 
         // Vérification s'il a déjà un abonnement actif
         $abonnementActif = Abonnement::where('prestataire_id', $prestataireId)
-            ->where('status', 'actif')
-            ->where('date_fin', '>=', Carbon::today())
-            ->first();
+        ->where(function ($query) {
+            $query->where('status', 'actif')
+                ->orWhere('date_fin', '>=',Carbon::today());
+        })
+        ->first();
 
         if ($abonnementActif) {
             $abonnementActif->load('typeAbonnement');  // Charge la relation typeAbonnement
