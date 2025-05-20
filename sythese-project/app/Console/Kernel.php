@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\UpdateReservationStatus::class,
         \App\Console\Commands\UpdateAbonnementStatus::class,
-        \App\Console\Commands\NotifierExpirationAbonnement::class, // ajoute ici ta commande de notification
+        \App\Console\Commands\NotifierExpirationAbonnement::class, 
+        \App\Console\Commands\EnvoyerMailExpirationAbonnement::class, 
     ];
 
     /**
@@ -29,6 +30,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('reservations:update-status')->daily();
         $schedule->command('abonnement:update-status')->daily();
         $schedule->command('abonnement:check-expiration')->daily(); // ligne importante ajoutée
+        $schedule->command('abonnement:mail-expiration')->dailyAt('08:00');
     }
 
     /**
