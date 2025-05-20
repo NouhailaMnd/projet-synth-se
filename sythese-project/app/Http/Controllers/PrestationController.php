@@ -7,6 +7,7 @@ use App\Models\Prestation;
 use App\Models\Prestataire;
 use App\Models\PrestationPrestataire;
 use Illuminate\Http\JsonResponse;
+ use App\Models\Abonnement;
 
 class PrestationController extends Controller
 {
@@ -26,18 +27,26 @@ class PrestationController extends Controller
         return response()->json($prestations);
     }
 
-   public function parPrestation($prestation_id): JsonResponse
+
+public function parPrestation($prestation_id): JsonResponse
 {
     $prestation = Prestation::findOrFail($prestation_id);
 
-    // Charger uniquement les prestataires avec status_validation = 'valide'
     $prestataires = $prestation->prestataires()
-        ->with('user')
-        ->wherePivot('status_validation', 'valide') // 👈 ajoute ce filtre sur la table pivot
-        ->get();
+        ->with(['user', 'abonnements' => function ($query) {
+            $query->where('status', 'actif');
+        }])
+        ->wherePivot('status_validation', 'valide')
+        ->get()
+        ->filter(function ($prestataire) {
+            return $prestataire->abonnements->isNotEmpty(); // ✅ Garde uniquement les prestataires avec au moins un abonnement actif
+        })
+        ->values(); // Pour réindexer la collection
 
     return response()->json($prestataires);
 }
+
+
 
     
 

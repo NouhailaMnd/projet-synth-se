@@ -27,10 +27,11 @@ class Prestataire extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function abonnements()
-    {
-        return $this->hasMany(Abonnement::class);
-    }
+public function abonnements()
+{
+    return $this->hasMany(Abonnement::class);
+}
+
 
     public function prestationPrestataires()
     {
